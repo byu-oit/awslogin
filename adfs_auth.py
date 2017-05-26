@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from urllib.parse import urlparse, urlunparse
+from urllib.parse import urlparse
 import re
 import lxml.etree as ET
 
@@ -22,7 +22,7 @@ def authenticate(username, password):
 
     # Parse the response and extract all the necessary values
     # in order to build a dictionary of all of the form values the IdP expects
-    formsoup = BeautifulSoup(formresponse.text)
+    formsoup = BeautifulSoup(formresponse.text, "lxml")
     payload = {}
 
     for inputtag in formsoup.find_all(re.compile('(INPUT|input)')):

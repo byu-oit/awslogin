@@ -49,7 +49,7 @@ def authenticate_duo(html_response, roles_page_url, session):
             session,
         )
 
-        return auth_signature
+        return auth_signature, duo_request_signature
     else:
         raise RuntimeError("DUO Transaction Not Initiated")
 
