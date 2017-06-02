@@ -50,8 +50,10 @@ def extract(html):
             './/{*}Attribute[@Name="https://aws.amazon.com/SAML/Attributes/SessionDuration"]/{*}AttributeValue'
     ):
         aws_session_duration = int(element.text)
+        
+    account_names = _get_account_names(html)
 
-    return principal_roles, assertion, aws_session_duration
+    return account_names, principal_roles, assertion, aws_session_duration
 
 
 
@@ -82,13 +84,33 @@ def retrieve_roles_page(roles_page_url, html_response, session, auth_signature, 
                 response
             )
         )
-
+        
     html_response = ET.fromstring(response.text, ET.HTMLParser())
+    
     return extract(html_response)
 
 
 _app_pattern = re.compile(".*(APP\|[^:]+)")
 
+def _get_account_names(saml_redirect_response):
+    saml_response = saml_redirect_response.find('.//form/input[@name="SAMLResponse"]').attrib['value']
+    saml_url = "https://signin.aws.amazon.com:443/saml"
+    headers = {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+    }
+    response = requests.post(saml_url, headers=headers, data={
+        'SAMLResponse': saml_response
+    })
+    response.raise_for_status()
+    html_response = ET.fromstring(response.text, ET.HTMLParser())
+    account_names = {}
+    for element in html_response.findall('.//div[@class="saml-account-name"]'):
+        account_id = element.text.split(' ')[2].replace('(', '').replace(')', '')
+        account_name = element.text.split(' ')[1]
+        account_names[account_id] = account_name
+    
+    return account_names
+    
 
 def _app(request_signature):
     m = _app_pattern.search(request_signature)
