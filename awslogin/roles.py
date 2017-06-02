@@ -60,11 +60,11 @@ def action_url_on_validation_success(html_response):
     element = html_response.find(duo_auth_method)
     return element.get('action')
 
-def retrieve_roles_page(roles_page_url, html_response, auth_signature, duo_request_signature):
+def retrieve_roles_page(roles_page_url, html_response, session, auth_signature, duo_request_signature):
 
     context = _context(html_response)
     signed_response = '{}:{}'.format(auth_signature, _app(duo_request_signature))
-    response = requests.post(
+    response = session.post(
         roles_page_url,
         verify=True,
         headers=_headers,

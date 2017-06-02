@@ -20,8 +20,7 @@ def assume_role(roleArn, principalArn, samlAssertion):
         SAMLAssertion=samlAssertion,
         DurationSeconds=3600,
     )
-
-    print(aws_session_token)
-    exit(0)
+    
+    return aws_session_token
 
 
