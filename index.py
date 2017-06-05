@@ -23,7 +23,7 @@ html_response, session, auth_signature, duo_request_signature = authenticate(use
 # Obtain the roles available to assume
 ####
 roles_page_url = action_url_on_validation_success(html_response)
-principal_roles, assertion, aws_session_duration = retrieve_roles_page(
+account_names, principal_roles, assertion, aws_session_duration = retrieve_roles_page(
     roles_page_url,
     html_response,
     session,
@@ -35,7 +35,7 @@ principal_roles, assertion, aws_session_duration = retrieve_roles_page(
 # Ask user which role to assume
 ####
 print(principal_roles)
-chosen_principal_role = ask_which_role_to_assume(principal_roles)
+chosen_principal_role = ask_which_role_to_assume(account_names, principal_roles)
 
 ####
 # Assume role and set in the environment
