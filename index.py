@@ -33,7 +33,6 @@ account_names, principal_roles, assertion, aws_session_duration = retrieve_roles
 ####
 # Ask user which role to assume
 ####
-print(principal_roles)
 chosen_principal_role = ask_which_role_to_assume(account_names, principal_roles)
 
 ####
