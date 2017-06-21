@@ -9,69 +9,73 @@ import re
 import lxml.etree as ET
 from urllib.parse import urlparse, parse_qs
 
-
 # idpentryurl: The initial url that starts the authentication process.
-idpentryurl = 'https://awslogin.byu.edu:443/adfs/ls/IdpInitiatedSignOn.aspx?loginToRp=urn:amazon:webservices'
+adfs_entry_url = 'https://awslogin.byu.edu:443/adfs/ls/IdpInitiatedSignOn.aspx?loginToRp=urn:amazon:webservices'
+
+
+def _get_auth_payload(login_html_soup, username, password):
+    auth_payload = {}
+    for inputtag in login_html_soup.find_all(re.compile('(INPUT|input)')):
+        name = inputtag.get('name', '')
+        value = inputtag.get('value', '')
+        if "user" in name.lower():
+            # Make an educated guess that this is the right field for the username
+            auth_payload[name] = username
+        elif "pass" in name.lower():
+            # Make an educated guess that this is the right field for the password
+            auth_payload[name] = password
+        else:
+            # Simply populate the parameter with the existing value (picks up hidden fields in the login form)
+            auth_payload[name] = value
+    return auth_payload
+
+
+def _get_login_submit_url(login_html_soup):
+    parsed_adfs_login_url = urlparse(adfs_entry_url)
+    adfs_form_submit_url = parsed_adfs_login_url.scheme + "://" + parsed_adfs_login_url.netloc
+    for inputtag in login_html_soup.find_all(re.compile('(FORM|form)')):
+        action = inputtag.get('action')
+        loginid = inputtag.get('id')
+        if (action and loginid == "loginForm"):
+            adfs_form_submit_url += action
+    return adfs_form_submit_url
+
+
+def _check_adfs_authentication_success(login_response_html_soup):
+    login_form_tag = login_response_html_soup.find('form', id='loginForm')
+    if login_form_tag: # Login form present means the authentication failed
+        auth_error = login_form_tag.find('span', id='errorText')
+        print(auth_error.string)
+        exit(1)
 
 def authenticate(username, password):
     # Initiate session handler
     session = requests.Session()
 
-    # Programmatically get the SAML assertion
-    # Opens the initial IdP url and follows all of the HTTP302 redirects, and
-    # gets the resulting login page
-    formresponse = session.get(idpentryurl, verify=True)
-
-    # Capture the idpauthformsubmiturl, which is the final url after all the 302s
-    idpauthformsubmiturl = formresponse.url
+    # Get the ADFS sign-in page HTML
+    login_page_response = session.get(adfs_entry_url, verify=True)\
 
     # Parse the response and extract all the necessary values
     # in order to build a dictionary of all of the form values the IdP expects
-    formsoup = BeautifulSoup(formresponse.text, "lxml")
-    payload = {}
+    login_html_soup = BeautifulSoup(login_page_response.text, "lxml")
+    auth_payload = _get_auth_payload(login_html_soup, username, password)
 
-    for inputtag in formsoup.find_all(re.compile('(INPUT|input)')):
-        name = inputtag.get('name', '')
-        value = inputtag.get('value', '')
-        if "user" in name.lower():
-            # Make an educated guess that this is the right field for the username
-            payload[name] = username
-        elif "email" in name.lower():
-            # Some IdPs also label the username field as 'email'
-            payload[name] = username
-        elif "pass" in name.lower():
-            # Make an educated guess that this is the right field for the password
-            payload[name] = password
-        else:
-            # Simply populate the parameter with the existing value (picks up hidden fields in the login form)
-            payload[name] = value
+    # From the form action for the login form, build the URL used to submit the login request
+    adfs_form_submit_url = _get_login_submit_url(login_html_soup)
 
-    # Debug the parameter payload if needed
-    # Use with caution since this will print sensitive output to the screen
-    # print payload
+    # Login with the ADFS credentials
+    login_response = session.post(
+        adfs_form_submit_url, data=auth_payload, verify=True)
 
-    # Some IdPs don't explicitly set a form action, but if one is set we should
-    # build the idpauthformsubmiturl by combining the scheme and hostname
-    # from the entry url with the form action target
-    # If the action tag doesn't exist, we just stick with the
-    # idpauthformsubmiturl above
-    for inputtag in formsoup.find_all(re.compile('(FORM|form)')):
-        action = inputtag.get('action')
-        loginid = inputtag.get('id')
-        if (action and loginid == "loginForm"):
-            parsedurl = urlparse(idpentryurl)
-            idpauthformsubmiturl = parsedurl.scheme + "://" + parsedurl.netloc + action
+    login_response_html_soup = BeautifulSoup(login_response.text, 'lxml')
 
-    # Performs the submission of the IdP login form with the above post data
-    response = session.post(
-        idpauthformsubmiturl, data=payload, verify=True)
-
-    html_response = ET.fromstring(response.text, ET.HTMLParser())
+    # Check that authentication succeeded. Exit with error if it didn't
+    _check_adfs_authentication_success(login_response_html_soup)
 
     # Perform DUO MFA
-    auth_signature, duo_request_signature = _authenticate_duo(html_response, True, session)
+    auth_signature, duo_request_signature = _authenticate_duo(login_response_html_soup, True, session)
 
-    return html_response, session, auth_signature, duo_request_signature
+    return login_response_html_soup, session, auth_signature, duo_request_signature
 
 _headers = {
     'Accept-Language': 'en',
@@ -80,9 +84,9 @@ _headers = {
     'Accept': 'text/plain, */*; q=0.01',
 }
 
-def _authenticate_duo(html_response, roles_page_url, session):
-    duo_host = _duo_host(html_response)
-    duo_request_signature = _duo_request_signature(html_response)
+def _authenticate_duo(duo_page_html_soup, roles_page_url, session):
+    duo_host = _duo_host(duo_page_html_soup)
+    duo_request_signature = _duo_request_signature(duo_page_html_soup)
 
     print("Sending request for authentication")
     (sid, preferred_factor, preferred_device), initiated = _initiate_authentication(
@@ -200,11 +204,9 @@ def _verify_that_code_was_sent(duo_host, sid, duo_transaction_id, session):
         )
 
 
-_tx_pattern = re.compile("(TX\|[^:]+):APP.+")
-
-
 def _tx(request_signature):
-    m = _tx_pattern.search(request_signature)
+    tx_pattern = re.compile("(TX\|[^:]+):APP.+")
+    m = tx_pattern.search(request_signature)
     return m.group(1)
 
 
@@ -305,21 +307,14 @@ def _begin_authentication_transaction(duo_host, sid, preferred_factor, preferred
     return json_response['response']['txid']
 
 
-_duo_host_pattern = re.compile("'host': '([^']+)'")
-
-
-def _duo_host(html_response):
-    duo_host_query = './/form[@id="duo_form"]/following-sibling::script'
-    element = html_response.xpath(duo_host_query)[0]
-    m = _duo_host_pattern.search(element.text)
+def _duo_host(duo_page_html_soup):
+    duo_script = duo_page_html_soup.find('form', id='duo_form').find_next_sibling('script').string
+    duo_host_pattern = re.compile("'host': '([^']+)'")
+    m = duo_host_pattern.search(duo_script)
     return m.group(1)
 
-
-_duo_signature_pattern = re.compile("'sig_request': '([^']+)'")
-
-
-def _duo_request_signature(html_response):
-    duo_signature_query = './/form[@id="duo_form"]/following-sibling::script'
-    element = html_response.xpath(duo_signature_query)[0]
-    m = _duo_signature_pattern.search(element.text)
+def _duo_request_signature(duo_page_html_soup):
+    duo_script = duo_page_html_soup.find('form', id='duo_form').find_next_sibling('script').string
+    duo_signature_pattern = re.compile("'sig_request': '([^']+)'")
+    m = duo_signature_pattern.search(duo_script)
     return m.group(1)

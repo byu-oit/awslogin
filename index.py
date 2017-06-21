@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 import getpass
-import os
 import subprocess
 
 from awslogin.adfs_auth import authenticate
@@ -17,15 +16,15 @@ print('')
 ####
 # Authenticate against ADFS with DUO MFA
 ####
-html_response, session, auth_signature, duo_request_signature = authenticate(username, password)
+login_response_html_soup, session, auth_signature, duo_request_signature = authenticate(username, password)
 
 ####
 # Obtain the roles available to assume
 ####
-roles_page_url = action_url_on_validation_success(html_response)
+roles_page_url = action_url_on_validation_success(login_response_html_soup)
 account_names, principal_roles, assertion, aws_session_duration = retrieve_roles_page(
     roles_page_url,
-    html_response,
+    login_response_html_soup,
     session,
     auth_signature,
     duo_request_signature,
@@ -46,6 +45,8 @@ subprocess.check_call('aws configure set aws_access_key_id {}'.format(aws_sessio
 subprocess.check_call('aws configure set aws_secret_access_key {}'.format(aws_session_token['Credentials']['SecretAccessKey']), shell=True)
 subprocess.check_call('aws configure set aws_session_token {}'.format(aws_session_token['Credentials']['SessionToken']), shell=True)
 subprocess.check_call('aws configure set region us-west-2', shell=True)
+
+print("Finished generating credentials")
 
 #proc = subprocess.Popen(args, env=os.environ)
 

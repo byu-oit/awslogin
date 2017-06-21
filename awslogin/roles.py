@@ -1,4 +1,5 @@
 import base64
+from bs4 import BeautifulSoup
 import lxml.etree as ET
 import re
 import requests
@@ -13,27 +14,18 @@ _headers = {
     'Accept': 'text/plain, */*; q=0.01',
 }
 
-def extract(html):
-    assertion = None
-
-    # Check to see if login returned an error
-    # Since we're screen-scraping the login form, we need to pull it out of a label
-    for element in html.findall('.//form[@id="loginForm"]//label[@id="errorText"]'):
-        if element.text is not None:
-            print('Login error: {}'.format(element.text), err=True)
-            exit(-1)
-
+def extract(saml_page_html_soup):
     # Retrieve Base64-encoded SAML assertion from form SAMLResponse input field
-    for element in html.findall('.//form[@name="hiddenform"]/input[@name="SAMLResponse"]'):
-        assertion = element.get('value')
+    saml_assertion = saml_page_html_soup.find('form', {"name":"hiddenform"}).find('input', {"name":"SAMLResponse"})['value']
 
     # If we did not get an error, but also do not have an assertion,
     # then the user needs to authenticate
-    if not assertion:
-        return None, None, None
+    if not saml_assertion:
+        print("Unknown error: No assertion returned")
+        exit(1)
 
     # Parse the returned assertion and extract the authorized roles
-    saml = ET.fromstring(base64.b64decode(assertion))
+    saml = ET.fromstring(base64.b64decode(saml_assertion))
 
     # Find all roles offered by the assertion
     raw_roles = saml.findall(
@@ -46,27 +38,23 @@ def extract(html):
 
     aws_session_duration = default_session_duration
     # Retrieve session duration
-    for element in saml.findall(
-            './/{*}Attribute[@Name="https://aws.amazon.com/SAML/Attributes/SessionDuration"]/{*}AttributeValue'
-    ):
+    for element in saml.findall('.//{*}Attribute[@Name="https://aws.amazon.com/SAML/Attributes/SessionDuration"]/{*}AttributeValue'):
         aws_session_duration = int(element.text)
         
-    account_names = _get_account_names(html)
+    account_names = _get_account_names(saml_assertion)
 
-    return account_names, principal_roles, assertion, aws_session_duration
+    return account_names, principal_roles, saml_assertion, aws_session_duration
 
 
+def action_url_on_validation_success(login_response_html_soup):
+    options_form = login_response_html_soup.find('form', id='options')
+    return options_form['action']
 
-def action_url_on_validation_success(html_response):
-    duo_auth_method = './/form[@id="options"]'
-    element = html_response.find(duo_auth_method)
-    return element.get('action')
 
-def retrieve_roles_page(roles_page_url, html_response, session, auth_signature, duo_request_signature):
-
-    context = _context(html_response)
+def retrieve_roles_page(roles_page_url, login_response_html_soup, session, auth_signature, duo_request_signature):
+    context = _context(login_response_html_soup)
     signed_response = '{}:{}'.format(auth_signature, _app(duo_request_signature))
-    response = session.post(
+    roles_page_response = session.post(
         roles_page_url,
         verify=True,
         headers=_headers,
@@ -78,28 +66,24 @@ def retrieve_roles_page(roles_page_url, html_response, session, auth_signature, 
         }
     )
 
-    if response.status_code != 200:
+    if roles_page_response.status_code != 200:
         raise RuntimeError(
             u'Issues during redirection to aws roles page. The error response {}'.format(
-                response
+                roles_page_response
             )
         )
-        
-    html_response = ET.fromstring(response.text, ET.HTMLParser())
-    
-    return extract(html_response)
+
+    roles_page_html_soup = BeautifulSoup(roles_page_response.text, 'lxml')
+    return extract(roles_page_html_soup)
 
 
-_app_pattern = re.compile(".*(APP\|[^:]+)")
-
-def _get_account_names(saml_redirect_response):
-    saml_response = saml_redirect_response.find('.//form/input[@name="SAMLResponse"]').attrib['value']
+def _get_account_names(saml_assertion):
     saml_url = "https://signin.aws.amazon.com:443/saml"
     headers = {
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
     }
     response = requests.post(saml_url, headers=headers, data={
-        'SAMLResponse': saml_response
+        'SAMLResponse': saml_assertion
     })
     response.raise_for_status()
     html_response = ET.fromstring(response.text, ET.HTMLParser())
@@ -113,10 +97,11 @@ def _get_account_names(saml_redirect_response):
     
 
 def _app(request_signature):
-    m = _app_pattern.search(request_signature)
+    app_pattern = re.compile(".*(APP\|[^:]+)")
+    m = app_pattern.search(request_signature)
     return m.group(1)
 
-def _context(html_response):
-    context_query = './/input[@id="context"]'
-    element = html_response.find(context_query)
-    return element.get('value')
+
+def _context(login_response_html_soup):
+    context_input = login_response_html_soup.find('input', id='context')
+    return context_input['value']
