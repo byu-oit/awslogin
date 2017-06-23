@@ -3,7 +3,6 @@ import botocore
 from botocore import client
 
 def _get_roles_by_account(account_names, principal_roles):
-    index = 0
     roles_by_account = {}
     for (principal_arn, role_arn) in principal_roles:
         account_id = role_arn.split(':')[4]
@@ -14,9 +13,17 @@ def _get_roles_by_account(account_names, principal_roles):
             roles_by_account[account_name] = {}
 
         roles_by_account[account_name][account_role] = {}
-        roles_by_account[account_name][account_role]['index'] = index
-        index += 1
-    return roles_by_account
+
+    index = 0
+    sorted_roles_by_account = {}
+    for account_name in sorted(roles_by_account.keys()):
+        sorted_roles = {}
+        for account_role in sorted(roles_by_account[account_name].keys()):
+            sorted_roles[account_role] = roles_by_account[account_name][account_role]
+            sorted_roles[account_role]['index'] = index
+            index += 1
+        sorted_roles_by_account[account_name] = sorted_roles
+    return sorted_roles_by_account
 
 
 def ask_which_role_to_assume(account_names, principal_roles):
