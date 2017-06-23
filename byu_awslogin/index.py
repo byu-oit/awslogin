@@ -35,7 +35,7 @@ def cli():
     ####
     # Ask user which role to assume
     ####
-    print(principal_roles)
+    #print(principal_roles)
     chosen_principal_role = ask_which_role_to_assume(account_names, principal_roles)
     
     ####
