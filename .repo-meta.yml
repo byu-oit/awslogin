@@ -4,7 +4,7 @@
 # You can fill in the information here and have the integration do that for you or you can do that yourself manually.
 $schemaver: '1.2'
 name: awslogin
-type: library
+type: command-line app
 aliases:
 short_description: Script for CLI access to AWS via ADFS
 assignment_group: gro:AD-Global Education Initiative
@@ -21,7 +21,7 @@ links:
     system_documentation_url: https://github.com/byu-oit/awslogin
     source_repo_url: https://github.com/byu-oit/awslogin
     swagger_urls:
-microservice: true
+microservice: false
 technologies_used:
   - Python
 standard_change_template_id:
