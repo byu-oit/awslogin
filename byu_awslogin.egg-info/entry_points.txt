@@ -1,0 +1,3 @@
+[console_scripts]
+awslogin = byu_awslogin.index:cli
+

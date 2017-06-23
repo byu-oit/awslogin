@@ -1,0 +1,13 @@
+setup.py
+byu_awslogin/__init__.py
+byu_awslogin/adfs_auth.py
+byu_awslogin/assume_role.py
+byu_awslogin/index.py
+byu_awslogin/roles.py
+byu_awslogin.egg-info/PKG-INFO
+byu_awslogin.egg-info/SOURCES.txt
+byu_awslogin.egg-info/dependency_links.txt
+byu_awslogin.egg-info/entry_points.txt
+byu_awslogin.egg-info/requires.txt
+byu_awslogin.egg-info/top_level.txt
+byu_awslogin.egg-info/zip-safe
