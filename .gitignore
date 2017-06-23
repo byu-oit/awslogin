@@ -5,3 +5,4 @@ venv/
 build/
 PKG-INFO
 .egg-info/
+dist/
