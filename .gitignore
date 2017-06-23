@@ -6,3 +6,4 @@ build/
 PKG-INFO
 .egg-info/
 dist/
+byu_awslogin.egg-info/

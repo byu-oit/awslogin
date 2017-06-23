@@ -18,7 +18,7 @@ def get_requirements():
         return lines
 
 setup(name='byu_awslogin',
-      version='0.9.0',
+      version='0.9.1',
       description="An aws-adfs spinoff that fits BYU's needs",
       long_description=long_description,
       author='BYU OIT Application Development',

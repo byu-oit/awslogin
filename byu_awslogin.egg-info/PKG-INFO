@@ -1,6 +1,6 @@
 Metadata-Version: 1.0
 Name: byu-awslogin
-Version: 0.9.0
+Version: 0.9.1
 Summary: An aws-adfs spinoff that fits BYU's needs
 Home-page: https://github.com/byu-oit/awslogin
 Author: BYU OIT Application Development
