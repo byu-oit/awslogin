@@ -1,0 +1,54 @@
+# For full spec reference see https://github.com/byu-oit/repo-meta/blob/master/repo-meta-template.yml 
+# This file was automatically generated. It is used for various integrations like creating and updating Software CIs in the CMDB.
+# You are required to maintain Software CI records in the CMDB for all of the deployable software artifacts you maintain.
+# You can fill in the information here and have the integration do that for you or you can do that yourself manually.
+$schemaver: '1.2'
+name: awslogin
+type: library
+aliases:
+short_description: Script for CLI access to AWS via ADFS
+assignment_group: gro:AD-Global Education Initiative
+notes:
+maintained_by:
+  - dsw88
+developed_by_byu: true
+ddd:
+    business_domain:
+    ubiquitous_language_url:
+    context_map_url:
+links:
+    system_documentation_url: https://github.com/byu-oit/awslogin
+    source_repo_url: https://github.com/byu-oit/awslogin
+    swagger_urls:
+microservice: true
+technologies_used:
+  - Python
+standard_change_template_id:
+stages:
+    development:
+        urls:
+            product_page:
+            physical_url:
+            virtual_url:
+        hosting_location: Other
+        aws_account:
+        relationships:
+            depends_on:
+                db_read_write:
+                db_read_only:
+                software:
+            supports:
+                software:
+                service:
+            reverse_proxy:
+            runs_on:
+                server_cluster:
+                virtual_server:
+                rack_server:
+                blade_server:
+tags:
+    data-sensitivity: confidential
+    env: dev
+    team: gro:AD-Global Education Initiative
+    app: awslogin
+federation_json_url: https://raw.githubusercontent.com/byu-oit/awslogin/master/.repo-meta.yml
