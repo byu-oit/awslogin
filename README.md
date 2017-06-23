@@ -11,3 +11,4 @@ Script for CLI access to AWS via ADFS
 * Authenticate once for 8 hours and rerun `awslogin` to relogin
 * Maybe add a select account then select role interactive method
 * Simplify the adfs authentication code
+* cache netid after subsequent logins ie default to last used
