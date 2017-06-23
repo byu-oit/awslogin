@@ -16,9 +16,9 @@ def _get_roles_by_account(account_names, principal_roles):
 
     index = 0
     sorted_roles_by_account = {}
-    for account_name in sorted(roles_by_account.iterkeys()):
+    for account_name in sorted(roles_by_account.keys()):
         sorted_roles = {}
-        for account_role in sorted(roles_by_account[account_name].iterkeys()):
+        for account_role in sorted(roles_by_account[account_name].keys()):
             sorted_roles[account_role] = roles_by_account[account_name][account_role]
             sorted_roles[account_role]['index'] = index
             index += 1
