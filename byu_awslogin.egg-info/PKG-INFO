@@ -6,5 +6,7 @@ Home-page: https://github.com/byu-oit/awslogin
 Author: BYU OIT Application Development
 Author-email: it@byu.edu
 License: Apache 2
-Description: UNKNOWN
+Description: # awslogin
+        Script for CLI access to AWS via ADFS
+        
 Platform: UNKNOWN

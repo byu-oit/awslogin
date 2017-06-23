@@ -1,5 +1,7 @@
 .idea/
 __pycache__/
-venv
+venv/
 *.pyc
-build
+build/
+PKG-INFO
+.egg-info/
