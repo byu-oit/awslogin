@@ -5,7 +5,6 @@ Python script for CLI and SDK access to AWS via ADFS while requiring MFA access 
 
 # TODO
 * (Josh) Alphabetize the account names and roles
-* (Lehi) remove the debug println
 * Final login message after selecting role specifying you have been logged into this role on this account
 * gracefully handle the error case when the duo push is rejected
 * Add support for profiles
