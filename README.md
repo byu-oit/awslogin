@@ -42,3 +42,4 @@ password: <the appropriate password>
 * (Brett) Maybe add a select account then select role interactive method
 * Simplify the adfs authentication code
 * cache netid after subsequent logins ie default to last used
+* Make a handel-codepipeline CI/CD pipeline with automated tests.  If they pass automatically deploy to pypi.
