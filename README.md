@@ -1,5 +1,7 @@
 # awslogin
-Script for CLI access to AWS via ADFS
+Python script for CLI and SDK access to AWS via ADFS while requiring MFA access using https://duo.com/
+
+
 
 # TODO
 * (Josh) Alphabetize the account names and roles
