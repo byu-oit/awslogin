@@ -16,8 +16,7 @@ Python script for CLI and SDK access to AWS via ADFS while requiring MFA access 
 * awslogin only works with python 3.
 * Enter your [virtualenv](https://virtualenv.pypa.io/en/stable/) using python 3.
 * Install twine by running `pip install twine`
-* Send the code to pypi
-  * Make sure you have a '~/.pypirc' file with the following contents
+* Make sure you have a '~/.pypirc' file with the following contents
 ```
 index-servers =
     pypi
@@ -26,11 +25,11 @@ index-servers =
 username: byu-oit-appdev
 password: <the appropriate password>
 ```
-  * Remove the old dist directory `rm -fr dist`
-  * Install the dependencies by running `pip install -r requirements.txt`
-  * Update the version in setup.py
-  * Build the installable artifacts by running `python setup.py sdist bdist_wheel`
-  * Send the new version to pypy by running `twine upload dist/*`
+* Remove the old dist directory `rm -fr dist`
+* Install the dependencies by running `pip install -r requirements.txt`
+* Update the version in setup.py
+* Build the installable artifacts by running `python setup.py sdist bdist_wheel`
+* Send the new version to pypy by running `twine upload dist/*`
 
 ## TODO
 * (Josh) Alphabetize the account names and roles
