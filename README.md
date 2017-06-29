@@ -1,9 +1,17 @@
 # awslogin
 Python script for CLI and SDK access to AWS via ADFS while requiring MFA access using https://duo.com/
 
+## Installation 
+* Install Python 3.x using your preferred method.  
+  * See https://www.python.org/downloads/ for a windows installation method.  
+  * In linux you may be able to use apt, rpm or https://www.python.org/downloads/.
+  * In Mac you can use homebrew, macports or https://www.python.org/downloads/.
+* Run `pip3 install byu-awslogin`
 
+## Usage
+* Run `awslogin`
 
-# TODO
+## TODO
 * (Josh) Alphabetize the account names and roles
 * Final login message after selecting role specifying you have been logged into this role on this account
 * gracefully handle the error case when the duo push is rejected
