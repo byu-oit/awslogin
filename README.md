@@ -27,7 +27,7 @@ index-servers =
 username: byu-oit-appdev
 password: <the appropriate password>
 ```
-
+* Remove the old dist directory `rm -fr dist`
 * Install the dependencies by running `python3 install -r requirements.txt`
 * Build the installable artifacts by running `python3 setup.py sdist bdist_wheel`
 * After you update the version in setup.py run `twine upload dist/*` to upload to pypi.python.org
