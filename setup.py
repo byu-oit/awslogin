@@ -19,8 +19,12 @@ def get_requirements():
         lines = [dep for dep in obj.read().split('\n') if dep]
         return lines
 
+VERSION = ''
+with open('VERSION') as verobj:
+    VERSION = verobj.read()
+
 setup(name='byu_awslogin',
-      version='0.9.6',
+      version=VERSION,
       description="An aws-adfs spinoff that fits BYU's needs",
       long_description=long_description,
       author='BYU OIT Application Development',
@@ -32,6 +36,6 @@ setup(name='byu_awslogin',
       install_requires=get_requirements(),
       zip_safe=True,
       entry_points={
-          'console_scripts': ['awslogin=byu_awslogin.index:cli']
+          'console_scripts': ['awslogin=byu_awslogin.index:main']
       }
       )

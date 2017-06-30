@@ -12,6 +12,41 @@ from urllib.parse import urlparse, parse_qs
 # idpentryurl: The initial url that starts the authentication process.
 adfs_entry_url = 'https://awslogin.byu.edu:443/adfs/ls/IdpInitiatedSignOn.aspx?loginToRp=urn:amazon:webservices'
 
+def authenticate(username, password):
+    # Initiate session handler
+    session = requests.Session()
+
+    # Get the ADFS sign-in page HTML
+    login_page_response = session.get(adfs_entry_url, verify=True)
+
+    # Parse the response and extract all the necessary values
+    # in order to build a dictionary of all of the form values the IdP expects
+    login_html_soup = BeautifulSoup(login_page_response.text, "lxml")
+    auth_payload = _get_auth_payload(login_html_soup, username, password)
+
+    # From the form action for the login form, build the URL used to submit the login request
+    adfs_form_submit_url = _get_login_submit_url(login_html_soup)
+
+    # Login with the ADFS credentials
+    login_response = session.post(
+        adfs_form_submit_url, data=auth_payload, verify=True)
+
+    login_response_html_soup = BeautifulSoup(login_response.text, 'lxml')
+
+    # Check that authentication succeeded. Exit with error if it didn't
+    _check_adfs_authentication_success(login_response_html_soup)
+
+    # Perform DUO MFA
+    auth_signature, duo_request_signature = _authenticate_duo(login_response_html_soup, True, session)
+
+    return login_response_html_soup, session, auth_signature, duo_request_signature
+
+_headers = {
+    'Accept-Language': 'en',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko',
+    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    'Accept': 'text/plain, */*; q=0.01',
+}
 
 def _get_auth_payload(login_html_soup, username, password):
     auth_payload = {}
@@ -47,42 +82,6 @@ def _check_adfs_authentication_success(login_response_html_soup):
         auth_error = login_form_tag.find('span', id='errorText')
         print(auth_error.string)
         exit(1)
-
-def authenticate(username, password):
-    # Initiate session handler
-    session = requests.Session()
-
-    # Get the ADFS sign-in page HTML
-    login_page_response = session.get(adfs_entry_url, verify=True)\
-
-    # Parse the response and extract all the necessary values
-    # in order to build a dictionary of all of the form values the IdP expects
-    login_html_soup = BeautifulSoup(login_page_response.text, "lxml")
-    auth_payload = _get_auth_payload(login_html_soup, username, password)
-
-    # From the form action for the login form, build the URL used to submit the login request
-    adfs_form_submit_url = _get_login_submit_url(login_html_soup)
-
-    # Login with the ADFS credentials
-    login_response = session.post(
-        adfs_form_submit_url, data=auth_payload, verify=True)
-
-    login_response_html_soup = BeautifulSoup(login_response.text, 'lxml')
-
-    # Check that authentication succeeded. Exit with error if it didn't
-    _check_adfs_authentication_success(login_response_html_soup)
-
-    # Perform DUO MFA
-    auth_signature, duo_request_signature = _authenticate_duo(login_response_html_soup, True, session)
-
-    return login_response_html_soup, session, auth_signature, duo_request_signature
-
-_headers = {
-    'Accept-Language': 'en',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko',
-    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-    'Accept': 'text/plain, */*; q=0.01',
-}
 
 def _authenticate_duo(duo_page_html_soup, roles_page_url, session):
     duo_host = _duo_host(duo_page_html_soup)

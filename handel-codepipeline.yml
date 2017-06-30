@@ -1,0 +1,15 @@
+version: 1
+
+name: byu-awslogin
+
+pipelines: 
+  prd:
+    phases:
+    - type: github
+      name: Source
+      owner: byu-oit
+      repo: awslogin
+      branch: master
+    - type: codebuild
+      name: Build
+      build_image: python:3.6.1

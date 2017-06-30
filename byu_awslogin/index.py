@@ -4,15 +4,21 @@ import os
 import fire
 import getpass
 import subprocess
-
+import configparser
+from os.path import expanduser
 from .adfs_auth import authenticate
 from .assume_role import ask_which_role_to_assume, assume_role
 from .roles import action_url_on_validation_success, retrieve_roles_page
 
 def cli(account=None, role=None):
     # Get the federated credentials from the user
-    net_id = input('BYU Net ID: ')
-    username = '{}@byu.local'.format(net_id)
+    cached_netid = load_last_netid()
+    net_id = input('BYU Net ID [{}]: '.format(cached_netid)) or cached_netid
+    if "@byu.local" in net_id:
+        print('@byu.local is not required')
+        username = net_id
+    else:
+        username = '{}@byu.local'.format(net_id)
     password = getpass.getpass()
     print('')
     
@@ -43,11 +49,10 @@ def cli(account=None, role=None):
     # Assume role and set in the environment
     ####
     aws_session_token = assume_role(*chosen_role, assertion)
-        
-    subprocess.check_call('aws configure set aws_access_key_id {}'.format(aws_session_token['Credentials']['AccessKeyId']), shell=True)
-    subprocess.check_call('aws configure set aws_secret_access_key {}'.format(aws_session_token['Credentials']['SecretAccessKey']), shell=True)
-    subprocess.check_call('aws configure set aws_session_token {}'.format(aws_session_token['Credentials']['SessionToken']), shell=True)
-    subprocess.check_call('aws configure set region us-west-2', shell=True)
+
+    write_to_cred_file(aws_session_token)
+    write_to_config_file(net_id, 'us-west-2')
+
     print("Now logged into {}@{}".format(role_name, account_name))
     #proc = subprocess.Popen(args, env=os.environ)
     
@@ -56,6 +61,44 @@ def cli(account=None, role=None):
     password = '##############################################'
     del username
     del password
-    
-if __name__ == '__main__':
+
+def main():
     fire.Fire(cli)
+    
+
+def open_config_file(file):
+    config = configparser.ConfigParser()
+    config.read(file)
+    return config
+
+
+def write_to_cred_file(aws_session_token):
+    file = "{}/.aws/credentials".format(expanduser('~'))
+    config = open_config_file(file)
+    config['default']['aws_access_key_id'] = aws_session_token['Credentials']['AccessKeyId']
+    config['default']['aws_secret_access_key'] = aws_session_token['Credentials']['SecretAccessKey']
+    config['default']['aws_session_token'] = aws_session_token['Credentials']['SessionToken']
+    with open(file, 'w') as configfile:
+        config.write(configfile)
+        
+
+def write_to_config_file(net_id, region):
+    file = "{}/.aws/config".format(expanduser('~'))
+    config = open_config_file(file)
+    config['default']['region'] = region
+    config['default']['adfs_netid'] = net_id
+    with open(file, 'w') as configfile:
+        config.write(configfile)
+
+
+def load_last_netid():
+    file = "{}/.aws/config".format(expanduser('~'))
+    config = open_config_file(file)
+    if config.has_section('default') and config.has_option('default', 'adfs_netid'):
+        return config['default']['adfs_netid']
+    else:
+        return ''
+        
+        
+if __name__ == '__main__':
+    main()

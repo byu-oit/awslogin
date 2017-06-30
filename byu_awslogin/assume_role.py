@@ -7,20 +7,20 @@ def ask_which_role_to_assume(account_names, principal_roles, account_name=None, 
     roles_by_account = get_roles_by_account(account_names, principal_roles)
     
     # Prompt the user for account (if not already provided)
-    if not account_name or account_name.lower() not in roles_by_account:
+    if not account_name or not case_insensitive_get(roles_by_account, account_name):
         account_names = list(roles_by_account.keys())
         account_names.sort()
-        account_name = prompt_for_account(account_names).lower()
+        account_name = prompt_for_account(account_names)
     # Prompt the user for role (if not already provided)
-    if not role_name or role_name.lower() not in roles_by_account[account_name.lower()]:
-        role_names = list(roles_by_account[account_name.lower()].keys())
+    if not role_name or not case_insensitive_get(roles_by_account, account_name, role_name):
+        role_names = list(case_insensitive_get(roles_by_account, account_name).keys())
         role_names.sort()
         if len(role_names) == 1:
             role_name = role_names[0]
         else:
             role_name = prompt_for_role(account_name, role_names)
     # Return role_arn and principal_arn for chosen role
-    return roles_by_account[account_name.lower()][role_name.lower()]
+    return case_insensitive_get(roles_by_account, account_name, role_name)
 
 
 def assume_role(roleArn, principalArn, samlAssertion):
@@ -35,6 +35,14 @@ def assume_role(roleArn, principalArn, samlAssertion):
     return aws_session_token
     
     
+def case_insensitive_get(dictionary, key, *keys):
+    inner = {key.lower(): value for key, value in dictionary.items()}.get(key.lower())
+    if keys:
+        return case_insensitive_get(inner, *keys)
+    else:
+        return inner
+    
+    
 def get_roles_by_account(account_names, principal_roles):
     roles_by_account = {}
     for (principal_arn, role_arn) in principal_roles:
@@ -42,7 +50,7 @@ def get_roles_by_account(account_names, principal_roles):
         account_name = account_names[account_id]
         role_name = role_arn.split(':')[5].split('/')[1]
         
-        roles_by_account.setdefault(account_name.lower(), {})[role_name.lower()] = (account_name, role_name, (role_arn, principal_arn))
+        roles_by_account.setdefault(account_name, {})[role_name] = (account_name, role_name, (role_arn, principal_arn))
     return roles_by_account
 
 

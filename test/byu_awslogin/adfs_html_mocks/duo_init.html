@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie ie8"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie ie9"> <![endif]-->
+<!--[if gt IE 9]><!--> <html lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8">
+<title>Two-Factor Authentication</title>
+
+<!-- Import for all versions of IE, in case the standards mode is downgraded to IE8 -->
+<!--[if IE]> <link rel="stylesheet" href="/frame/static/css/v3/ie8.css?v=90941"> <![endif]-->
+
+<link rel="stylesheet" href="/frame/static/css/normalize.css?v=51888">
+<link rel="stylesheet" href="/frame/static/shared/fonts/open-sans/open-sans.css?v=d2bd8">
+<link rel="stylesheet" href="/frame/static/shared/fonts/antenna/antenna.css?v=781ec">
+<link rel="stylesheet" href="/frame/static/fonts/ss-standard/ss-standard.css?v=56373">
+<link rel="stylesheet" href="/frame/static/shared/css/fonts/duo-admin.css?v=87f07">
+<link rel="stylesheet" href="/frame/static/css/v3/base.css?v=2fa93">
+
+<link rel="stylesheet" href="/frame/static/css/tipsy.css?v=d2369">
+
+
+</head>
+<body>
+<div class="base-wrapper ">
+
+<div class="base-main">
+<div role="main" class="base-body">
+
+<form action="/frame/prompt" method="post" id="login-form" class="inline">
+<input type="hidden" name="sid" value="ZGUwZTI0YWIzYjkxNGNhYThiZGI2YTcwM2YyMGE5NGM=|128.187.116.24|1498846084|0688064677a7703fa82010b817ae8590ffc778b5">
+<input type="hidden" name="url" value="/frame/prompt">
+<input type="hidden" name="enrollment_message" value="">
+<input type="hidden" name="itype" value="adfs">
+
+<input type="hidden" name="out_of_date" value="">
+
+
+<input type="hidden" name="preferred_factor" value="Duo Push">
+<input type="hidden" name="preferred_device" value="phone1">
+
+<input type="hidden" name="days_to_block" value="None">
+<fieldset class="device-selector hidden">
+<h1 class="cramped-frame-view">
+Device:
+</h1>
+<div class="device-select-wrapper">
+<select name="device" aria-label="Device" tabindex=2>
+
+
+
+
+<option value="phone1">
+iOS (XXX-XXX-9541)
+</option>
+
+
+
+
+
+
+
+
+
+
+
+
+</select>
+</div>
+</fieldset>
+
+
+
+
+
+
+
+
+<fieldset data-device-index="phone1" class="hidden">
+<h2 class="medium-or-larger">
+Choose an authentication method
+</h2>
+
+
+<div class="row-label push-label">
+<input type="hidden" name="factor" value="Duo Push">
+<span class="label factor-label">
+<i class="icon-smartphone-check"></i>
+Duo Push
+
+
+<small class="used-automatically">
+<i class="icon-check"></i>
+Used automatically
+</small>
+
+
+</span>
+<button type="submit" class="positive auth-button" tabindex="2" > Send Me a Push </button>
+</div>
+
+
+
+
+<div class="passcode-label row-label">
+
+
+
+
+<input type="hidden" name="factor" value="Passcode">
+<span class="label factor-label">
+<i class="icon-smartphone-ellipsis"></i>
+Passcode
+</span>
+<input type="text" name="passcode" autocomplete="off" data-index="phone1" class="hidden passcode-input" placeholder="ex. 867539" aria-label="passcode" tabindex=2>
+<button type="submit" class="positive auth-button" tabindex="2" > Enter a Passcode </button>
+
+
+<input name="phone-smsable" type="hidden" value="false" />
+<input name="mobile-otpable" type="hidden" value="true" />
+<input name="next-passcode" type="hidden" value="None" />
+</div>
+
+</fieldset>
+
+
+<input type="hidden" name="has-token" value="false">
+
+
+
+<div>
+
+<div class="stay-logged-in">
+<label>
+<input type="checkbox"
+name="dampen_choice"
+value="1" tabindex="2">
+<span>
+Remember me for 30 days
+</span>
+</label>
+</div>
+
+</div>
+</form>
+
+</div>
+</div>
+<div class="base-navigation">
+
+<div class="base-navigation">
+<div role="banner">
+
+
+<a href="/frame/prompt?sid=ZGUwZTI0YWIzYjkxNGNhYThiZGI2YTcwM2YyMGE5NGM%3D%7C128.187.116.24%7C1498846084%7C0688064677a7703fa82010b817ae8590ffc778b5">
+<img src="/frame/logo?sid=ZGUwZTI0YWIzYjkxNGNhYThiZGI2YTcwM2YyMGE5NGM%3D%7C128.187.116.24%7C1498846084%7C0688064677a7703fa82010b817ae8590ffc778b5" alt="Brigham Young University Authentication" width="128">
+</a>
+
+
+</div>
+<div class="help-sidebar">
+<button class='btn btn-support'>
+<i class="icon-align-justify"></i>
+<i class="icon-delete" aria-label="Close"></i>
+Settings
+</button>
+<div class="help-links">
+<nav role="navigation">
+
+<a class="help-nav" href="https://guide.duo.com/prompt" target="_blank">
+What is this?<i class="icon-new-window" aria-label="Opens new tab"></i>
+</a>
+
+
+<a href="#" class="need-help">Need help?</a>
+</nav>
+
+
+</div>
+
+</div>
+<div class="help-overlay offscreen">
+<div class="help-links">
+<nav role="navigation">
+
+<a class="help-nav" href="https://guide.duo.com/prompt" target="_blank">
+What is this?<i class="icon-new-window" aria-label="Opens new tab"></i>
+</a>
+
+
+<a href="#" class="need-help">Need help?</a>
+</nav>
+
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="base-sidebar">
+
+</div>
+<div id="messages-view" class="hidden" aria-live="polite">
+<div class="messages-list">
+
+</div>
+</div>
+
+
+</div>
+<script id="translations" type="text/json">
+{"locale_data": {"js-messages": {"": {"lang": "en", "plural_forms": "nplurals=2; plural=(n != 1);", "domain": "js-messages"}}}, "domain": "js-messages"}
+</script>
+<script src="/frame/static/shared/lib/jed/jed.js?v=3b969"></script>
+
+<script src="/frame/static/shared/lib/jquery/jquery-legacy.min.js?v=65126"></script>
+
+<script src="/frame/static/shared/lib/he/he.min.js?v=80d03"></script>
+<script src="/frame/static/js/lib/jquery-postmessage.min.js?v=15c30"></script>
+<script src="/frame/static/shared/lib/lodash/lodash.min.js?v=b3453"></script>
+<script src="/frame/static/shared/lib/backbone/backbone-min.js?v=9cfbc"></script>
+<script src="/frame/static/shared/js/gettext.js?v=2ffec"></script>
+<script src="/frame/static/js/page/v3/base.js?v=0cc0d"></script>
+<script src="/frame/static/shared/lib/validator/validator.min.js?v=74345"></script>
+<script type="text/json" id="helpdesk-message">{"message": "Find answers at duo.byu.edu or email duo-support@byu.edu"}</script>
+<script id="browser_exceptions" src="/frame/static/shared/js/errors.js?v=c31d2" data-url="/frame/browser_exceptions"></script>
+<!--[if lt IE 10]>
+<script src="/frame/static/js/page/v3/quirks.js?v=3e04a"></script>
+<!--<![endif]-->
+<script src="/frame/static/js/page/v3/frame.js?v=3e917"></script>
+
+
+<script src="/frame/static/shared/lib/u2f/u2f.min.js?v=dd1cd"></script>
+<script src="/frame/static/js/lib/jquery.tipsy.js?v=cb2d5"></script>
+<script src="/frame/static/js/page/v3/prompt.js?v=9006a"></script>
+
+
+<!--[if lt IE 9]>
+<script src="/frame/static/js/lib/html5shiv.js?v=5a98a"></script>
+<![endif]-->
+</body>
+</html>
