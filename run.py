@@ -1,3 +1,4 @@
 from byu_awslogin import index
+import fire
 
-index.cli()
+fire.Fire(index.cli)
