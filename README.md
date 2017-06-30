@@ -9,7 +9,8 @@ Python script for CLI and SDK access to AWS via ADFS while requiring MFA access 
 * Run `pip3 install byu-awslogin`
 
 ## Usage
-* Run `awslogin`
+* Run `awslogin` and it will prompt you for the AWS account and role to use.
+* Run `awslogin --account <account name> --role <role name>` to skip the prompting for account and name.  You could specify just one of the arcuments as well.
 
 ## Deploying changes
 * Make sure you have python 3 installed.
@@ -21,13 +22,9 @@ Python script for CLI and SDK access to AWS via ADFS while requiring MFA access 
 
 
 ## TODO
-* (Josh) Alphabetize the account names and roles
-* Final login message after selecting role specifying you have been logged into this role on this account
 * gracefully handle the error case when the duo push is rejected
 * Add support for profiles
-* (Lehi) Add flags for account and role
 * Authenticate once for 8 hours and rerun `awslogin` to relogin
-* (Brett) Maybe add a select account then select role interactive method
 * Simplify the adfs authentication code
 * cache netid after subsequent logins ie default to last used
 * Write tests
