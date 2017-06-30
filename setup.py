@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
 
+import os
 import sys
+import subprocess
 from setuptools import setup, find_packages
 
 if int(sys.version[0]) < 3:
     sys.stderr.write("byu_awslogin requires python 3\n")
     sys.exit(-1)
 
-# we only use the subset of markdown that is also valid reStructuredText so
-# that our README.md works on both github (markdown) and pypi (reStructuredText)
-with open("README.md") as rm_file:
+subprocess.check_call('pandoc --from=markdown --to=rst --output=README.rst README.md', shell=True)
+with open("README.rst") as rm_file:
     long_description = rm_file.read()
+os.remove('README.rst')
 
 def get_requirements():
     with open('requirements.txt') as obj:
@@ -18,7 +20,7 @@ def get_requirements():
         return lines
 
 setup(name='byu_awslogin',
-      version='0.9.4',
+      version='0.9.6',
       description="An aws-adfs spinoff that fits BYU's needs",
       long_description=long_description,
       author='BYU OIT Application Development',
