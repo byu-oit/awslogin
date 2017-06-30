@@ -15,3 +15,4 @@ lxml
 awscli
 fire
 pytest
+twine
