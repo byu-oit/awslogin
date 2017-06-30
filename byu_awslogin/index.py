@@ -14,7 +14,7 @@ def cli(account=None, role=None):
     # Get the federated credentials from the user
     cached_netid = load_last_netid()
     if cached_netid:
-        net_id_prompt = 'BYU Net ID[{}]: '.format(cached_netid)
+        net_id_prompt = 'BYU Net ID [{}]: '.format(cached_netid)
     else:
         net_id_prompt = 'BYU Net ID: '
     net_id = input(net_id_prompt) or cached_netid
@@ -77,6 +77,7 @@ def open_config_file(file):
 
 
 def write_to_cred_file(aws_session_token):
+    check_for_aws_dir()
     file = "{}/.aws/credentials".format(expanduser('~'))
     config = open_config_file(file)
     config['default'] = {'aws_access_key_id': aws_session_token['Credentials']['AccessKeyId'],
@@ -86,7 +87,16 @@ def write_to_cred_file(aws_session_token):
     with open(file, 'w') as configfile:
         config.write(configfile)
 
+
+def check_for_aws_dir():
+    directory = "{}/.aws".format(expanduser('~'))
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    file = "{}/config".format(directory)
+
+
 def write_to_config_file(net_id, region):
+    check_for_aws_dir()
     file = "{}/.aws/config".format(expanduser('~'))
     config = open_config_file(file)
     config['default'] = {'region': region, 'adfs_netid': net_id}
