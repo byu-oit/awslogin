@@ -49,3 +49,14 @@ def assume_role(roleArn, principalArn, samlAssertion):
     return aws_session_token
 
 
+def prompt_for_account(account_names):
+    print('#--------------------------------------------------')
+    print('# To which account would you like to login?')
+    print('#--------------------------------------------------')
+    
+    for index, account_name in enumerate(account_names):
+        print('{} {}'.format(str(index).rjust(2)), account_name)
+        
+    choice = input('Select account: ')
+    return account_names[int(choice)]
+        
