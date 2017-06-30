@@ -12,12 +12,22 @@ BYU used to use the great [aws-adfs](https://github.com/venth/aws-adfs) CLI tool
 * Run `pip3 install byu-awslogin`
 
 ## Usage
+awslogin automatically sets up the default profile in your ~/.aws/config and ~/.aws/credentials files.  **_If you already have a default profile you want to save in your ~/.aws files make sure to do that before running awslogin._**
+
+Once you're logged in, you can execute commands using the AWS CLI or AWS SDK. Try running `aws s3 ls`.
+Currently, awslogin tokens are only valid for 1 hour due to the assume_role_with_saml AWS API call has a max timeout of 1 hour.
+
+To use it:
 * Run `awslogin` and it will prompt you for the AWS account and role to use.
 * Run `awslogin --account <account name> --role <role name>` to skip the prompting for account and name.  You could specify just one of the arcuments as well.
 
+## Reporting bugs or requesting features
+* Enter an issue on the github repo.
+* Or, even better if you can, fix the issue and make a pull request.
+
 ## Deploying changes
 * Update the version in the VERSION file.
-* Commit the change and push.  Handel-codepipeline will test and if the tests pass upload a new version to pypi.
+* Commit the change and push.  Handel-codepipeline will run the automated tests and if they pass it will build and upload a new version to pypi.
 
 ## TODO
 * gracefully handle the error case when the duo push is rejected
