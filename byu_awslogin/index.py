@@ -25,12 +25,12 @@ def cli(account=None, role=None):
         username = '{}@byu.local'.format(net_id)
     password = getpass.getpass()
     print('')
-    
+
     ####
     # Authenticate against ADFS with DUO MFA
     ####
     html_response, session, auth_signature, duo_request_signature = authenticate(username, password)
-    
+
     ####
     # Obtain the roles available to assume
     ####
@@ -42,13 +42,13 @@ def cli(account=None, role=None):
         auth_signature,
         duo_request_signature,
     )
-    
+
     ####
     # Ask user which role to assume
     ####
     #print(principal_roles)
     account_name, role_name, chosen_role = ask_which_role_to_assume(account_names, principal_roles, account, role)
-    
+
     ####
     # Assume role and set in the environment
     ####
@@ -59,7 +59,7 @@ def cli(account=None, role=None):
 
     print("Now logged into {}@{}".format(role_name, account_name))
     #proc = subprocess.Popen(args, env=os.environ)
-    
+
     # Overwrite and delete the credential variables, just for safety
     username = '##############################################'
     password = '##############################################'
@@ -68,7 +68,7 @@ def cli(account=None, role=None):
 
 def main():
     fire.Fire(cli)
-    
+
 
 def open_config_file(file):
     config = configparser.ConfigParser()
@@ -101,7 +101,7 @@ def load_last_netid():
         return config['default']['adfs_netid']
     else:
         return ''
-        
-        
+
+
 if __name__ == '__main__':
     main()
