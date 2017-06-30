@@ -9,7 +9,7 @@ if int(sys.version[0]) < 3:
     sys.stderr.write("byu_awslogin requires python 3\n")
     sys.exit(-1)
 
-subprocess.check_call('pandoc --from=markdown --to=rst --output=README.rst README.md', shell=True)
+subprocess.check_call('pandoc --from=markdown_github --to=rst --output=README.rst README.md', shell=True)
 with open("README.rst") as rm_file:
     long_description = rm_file.read()
 os.remove('README.rst')
