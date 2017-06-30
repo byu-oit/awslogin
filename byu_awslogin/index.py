@@ -13,7 +13,11 @@ from .roles import action_url_on_validation_success, retrieve_roles_page
 def cli(account=None, role=None):
     # Get the federated credentials from the user
     cached_netid = load_last_netid()
-    net_id = input('BYU Net ID [{}]: '.format(cached_netid)) or cached_netid
+    if cached_netid:
+        net_id_prompt = 'BYU Net ID[{}]: '.format(cached_netid)
+    else:
+        net_id_prompt = 'BYU Net ID: '
+    net_id = input(net_id_prompt) or cached_netid
     if "@byu.local" in net_id:
         print('@byu.local is not required')
         username = net_id
@@ -75,18 +79,17 @@ def open_config_file(file):
 def write_to_cred_file(aws_session_token):
     file = "{}/.aws/credentials".format(expanduser('~'))
     config = open_config_file(file)
-    config['default']['aws_access_key_id'] = aws_session_token['Credentials']['AccessKeyId']
-    config['default']['aws_secret_access_key'] = aws_session_token['Credentials']['SecretAccessKey']
-    config['default']['aws_session_token'] = aws_session_token['Credentials']['SessionToken']
+    config['default'] = {'aws_access_key_id': aws_session_token['Credentials']['AccessKeyId'],
+                         'aws_secret_access_key': aws_session_token['Credentials']['SecretAccessKey'],
+                         'aws_session_token': aws_session_token['Credentials']['SessionToken']
+                        }
     with open(file, 'w') as configfile:
         config.write(configfile)
-        
 
 def write_to_config_file(net_id, region):
     file = "{}/.aws/config".format(expanduser('~'))
     config = open_config_file(file)
-    config['default']['region'] = region
-    config['default']['adfs_netid'] = net_id
+    config['default'] = {'region': region, 'adfs_netid': net_id}
     with open(file, 'w') as configfile:
         config.write(configfile)
 
