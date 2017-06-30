@@ -27,5 +27,5 @@ params = load_config('byu-awslogin.prd', ['pypi_username', 'pypi_password'])
 config = configparser.ConfigParser()
 config['distutils'] = {'index-servers': 'pypi'}
 config['pypi'] = {'username': params['pypi_username'], 'password': params['pypi_password']}
-with open('{}/.pypirc'.format(expanduser('~'))) as pypirc:
+with open('{}/.pypirc'.format(expanduser('~')), 'w') as pypirc:
     config.write(pypirc)
