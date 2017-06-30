@@ -4,7 +4,7 @@ phases:
   pre_build:
     commands:
       - apt-get update
-      - apt-get install pandoc
+      - apt-get install -y pandoc
       - pip install -r requirements.txt
   build:
     commands: 
