@@ -2,41 +2,25 @@ import boto3
 import botocore
 from botocore import client
 
-# def _get_roles_by_account(account_names, principal_roles):
-#     index = 0
-#     roles_by_account = {}
-#     for (principal_arn, role_arn) in principal_roles:
-#         account_id = role_arn.split(':')[4]
-#         account_name = account_names[account_id]
-#         account_role = role_arn.split(':')[5].split('/')[1]
-
-#         if not roles_by_account.get(account_name):
-#             roles_by_account[account_name] = {}
-
-#         roles_by_account[account_name][account_role] = {}
-#         roles_by_account[account_name][account_role]['index'] = index
-#         index += 1
-#     return roles_by_account
-
 
 def ask_which_role_to_assume(account_names, principal_roles, account_name=None, role_name=None):
     roles_by_account = get_roles_by_account(account_names, principal_roles)
     
     # Prompt the user for account (if not already provided)
-    if not account_name or account_name not in roles_by_account:
+    if not account_name or account_name.lower() not in roles_by_account:
         account_names = list(roles_by_account.keys())
         account_names.sort()
-        account_name = prompt_for_account(account_names)
+        account_name = prompt_for_account(account_names).lower()
     # Prompt the user for role (if not already provided)
-    if not role_name or role_name not in roles_by_account[account_name]:
-        role_names = list(roles_by_account[account_name].keys())
+    if not role_name or role_name.lower() not in roles_by_account[account_name.lower()]:
+        role_names = list(roles_by_account[account_name.lower()].keys())
         role_names.sort()
         if len(role_names) == 1:
             role_name = role_names[0]
         else:
             role_name = prompt_for_role(account_name, role_names)
     # Return role_arn and principal_arn for chosen role
-    return account_name, role_name, roles_by_account[account_name][role_name]
+    return roles_by_account[account_name.lower()][role_name.lower()]
 
 
 def assume_role(roleArn, principalArn, samlAssertion):
@@ -56,9 +40,9 @@ def get_roles_by_account(account_names, principal_roles):
     for (principal_arn, role_arn) in principal_roles:
         account_id = role_arn.split(':')[4]
         account_name = account_names[account_id]
-        account_role = role_arn.split(':')[5].split('/')[1]
+        role_name = role_arn.split(':')[5].split('/')[1]
         
-        roles_by_account.setdefault(account_name, {})[account_role] = (role_arn, principal_arn)
+        roles_by_account.setdefault(account_name.lower(), {})[role_name.lower()] = (account_name, role_name, (role_arn, principal_arn))
     return roles_by_account
 
 
