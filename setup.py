@@ -36,5 +36,19 @@ setup(name='byu_awslogin',
       zip_safe=True,
       entry_points={
           'console_scripts': ['awslogin=byu_awslogin.index:main']
-      }
-      )
+      },
+      classifiers=[
+          'Development Status :: 5 - Production/Stable',
+          'Environment :: Console',
+          'Intended Audience :: Developers',
+          'Intended Audience :: System Administrators',
+          'Intended Audience :: Education',
+          'License :: OSI Approved :: Apache Software License',
+          'Operating System :: MacOS :: MacOS X',
+          'Operating System :: Microsoft :: Windows',
+          'Operating System :: POSIX',
+          'Programming Language :: Python :: 3 :: Only',
+          'Natural Language :: English',
+          'Topic :: Utilities'
+      ]
+)
