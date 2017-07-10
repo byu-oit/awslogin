@@ -19,7 +19,7 @@ Currently, awslogin tokens are only valid for 1 hour due to the assume_role_with
 
 To use it:
 * Run `awslogin` and it will prompt you for the AWS account and role to use.
-* Run `awslogin --account <account name> --role <role name>` to skip the prompting for account and name.  You could specify just one of the arcuments as well.
+* Run `awslogin --account <account name> --role <role name>` to skip the prompting for account and name.  You could specify just one of the arguments as well.
 * Run `awslogin --profile <profile name>` to specifiy an alternative profile
 * Run `awslogin -- --help` for full help message
 
