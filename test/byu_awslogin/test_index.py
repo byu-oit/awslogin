@@ -22,6 +22,10 @@ def read_config_file(file):
 
 
 @pytest.fixture
+def profile():
+    return 'default'
+
+@pytest.fixture
 def fake_config_file(tmpdir):
     dir = tmpdir.dirpath(".aws/")
     file = dir + 'config'
@@ -48,9 +52,9 @@ def test_check_for_aws_dir(tmpdir):
     assert os.path.exists(dir)
 
 
-def test_write_to_cred_file(aws_cred_file):
+def test_write_to_cred_file(aws_cred_file, profile):
     aws_session_token = {'Credentials': {'AccessKeyId': 'keyid', 'SecretAccessKey': 'secretkey', 'SessionToken': 'sessiontoken'}}
-    index.write_to_cred_file(aws_session_token, aws_cred_file)
+    index.write_to_cred_file(aws_cred_file, aws_session_token, profile)
     config = read_config_file(aws_cred_file)
     assert config['default'] == {'aws_access_key_id': 'keyid',
                                  'aws_secret_access_key': 'secretkey',
@@ -58,16 +62,16 @@ def test_write_to_cred_file(aws_cred_file):
                                  }
 
 
-def test_write_to_config_file(aws_config_file):
+def test_write_to_config_file(aws_config_file, profile):
     net_id = 'fake_netid'
     region = 'fakeRegion'
-    index.write_to_config_file(net_id, region, aws_config_file)
+    index.write_to_config_file(aws_config_file, net_id, region, profile)
     config = read_config_file(aws_config_file)
     assert config['default'] == {'region': 'fakeRegion', 'adfs_netid': 'fake_netid'}
 
 
-def test_load_last_netid(fake_config_file):
-    assert index.load_last_netid(fake_config_file) == 'fake_netid'
+def test_load_last_netid(fake_config_file, profile):
+    assert index.load_last_netid(fake_config_file, profile) == 'fake_netid'
 
 
 @pytest.mark.skip(reason="not sure how to test this yet")
