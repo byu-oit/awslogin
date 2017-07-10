@@ -36,6 +36,5 @@ To use it:
 * Add support for profiles
 * Authenticate once for 8 hours and rerun `awslogin` to relogin
 * Write tests
-  * (Nate) index.py
   * roles.py
   * assume_role.py
