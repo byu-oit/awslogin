@@ -12,7 +12,7 @@ BYU used to use the great [aws-adfs](https://github.com/venth/aws-adfs) CLI tool
 * Run `pip3 install byu-awslogin`
 
 ## Usage
-awslogin automatically sets up the default profile in your ~/.aws/config and ~/.aws/credentials files.  **_If you already have a default profile you want to save in your ~/.aws files make sure to do that before running awslogin._**
+awslogin defaults to the default profile in your ~/.aws/config and ~/.aws/credentials files.  **_If you already have a default profile you want to save in your ~/.aws files make sure to do that before running awslogin._**
 
 Once you're logged in, you can execute commands using the AWS CLI or AWS SDK. Try running `aws s3 ls`.
 Currently, awslogin tokens are only valid for 1 hour due to the assume_role_with_saml AWS API call has a max timeout of 1 hour.
@@ -20,6 +20,8 @@ Currently, awslogin tokens are only valid for 1 hour due to the assume_role_with
 To use it:
 * Run `awslogin` and it will prompt you for the AWS account and role to use.
 * Run `awslogin --account <account name> --role <role name>` to skip the prompting for account and name.  You could specify just one of the arcuments as well.
+* Run `awslogin --profile <profile name>` to specifiy an alternative profile
+* Run `awslogin -- --help` for full help message
 
 ## Reporting bugs or requesting features
 * Enter an issue on the github repo.
