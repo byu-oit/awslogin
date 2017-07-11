@@ -3,16 +3,16 @@
 import os
 import fire
 import getpass
-import subprocess
 import configparser
 from os.path import expanduser
 from .adfs_auth import authenticate
 from .assume_role import ask_which_role_to_assume, assume_role
 from .roles import action_url_on_validation_success, retrieve_roles_page
 
-def cli(account=None, role=None):
+
+def cli(account=None, role=None, profile='default'):
     # Get the federated credentials from the user
-    cached_netid = load_last_netid()
+    cached_netid = load_last_netid(aws_file('config'), profile)
     if cached_netid:
         net_id_prompt = 'BYU Net ID [{}]: '.format(cached_netid)
     else:
@@ -46,7 +46,6 @@ def cli(account=None, role=None):
     ####
     # Ask user which role to assume
     ####
-    #print(principal_roles)
     account_name, role_name, chosen_role = ask_which_role_to_assume(account_names, principal_roles, account, role)
 
     ####
@@ -54,11 +53,11 @@ def cli(account=None, role=None):
     ####
     aws_session_token = assume_role(*chosen_role, assertion)
 
-    write_to_cred_file(aws_session_token)
-    write_to_config_file(net_id, 'us-west-2')
+    check_for_aws_dir()
+    write_to_cred_file(aws_file('creds'), aws_session_token, profile)
+    write_to_config_file(aws_file('config'), net_id, 'us-west-2', profile)
 
     print("Now logged into {}@{}".format(role_name, account_name))
-    #proc = subprocess.Popen(args, env=os.environ)
 
     # Overwrite and delete the credential variables, just for safety
     username = '##############################################'
@@ -66,8 +65,16 @@ def cli(account=None, role=None):
     del username
     del password
 
+
 def main():
     fire.Fire(cli)
+
+
+def aws_file(file_type):
+    if file_type == 'creds':
+        return "{}/.aws/credentials".format(expanduser('~'))
+    else:
+        return "{}/.aws/config".format(expanduser('~'))
 
 
 def open_config_file(file):
@@ -76,39 +83,32 @@ def open_config_file(file):
     return config
 
 
-def write_to_cred_file(aws_session_token):
-    check_for_aws_dir()
-    file = "{}/.aws/credentials".format(expanduser('~'))
-    config = open_config_file(file)
-    config['default'] = {'aws_access_key_id': aws_session_token['Credentials']['AccessKeyId'],
-                         'aws_secret_access_key': aws_session_token['Credentials']['SecretAccessKey'],
-                         'aws_session_token': aws_session_token['Credentials']['SessionToken']
-                        }
-    with open(file, 'w') as configfile:
-        config.write(configfile)
-
-
-def check_for_aws_dir():
-    directory = "{}/.aws".format(expanduser('~'))
+def check_for_aws_dir(directory="{}/.aws".format(expanduser('~'))):
     if not os.path.exists(directory):
         os.makedirs(directory)
-    file = "{}/config".format(directory)
 
 
-def write_to_config_file(net_id, region):
-    check_for_aws_dir()
-    file = "{}/.aws/config".format(expanduser('~'))
+def write_to_cred_file(file, aws_session_token, profile):
     config = open_config_file(file)
-    config['default'] = {'region': region, 'adfs_netid': net_id}
+    config[profile] = {'aws_access_key_id': aws_session_token['Credentials']['AccessKeyId'],
+                       'aws_secret_access_key': aws_session_token['Credentials']['SecretAccessKey'],
+                       'aws_session_token': aws_session_token['Credentials']['SessionToken']
+                       }
     with open(file, 'w') as configfile:
         config.write(configfile)
 
 
-def load_last_netid():
-    file = "{}/.aws/config".format(expanduser('~'))
+def write_to_config_file(file, net_id, region, profile):
     config = open_config_file(file)
-    if config.has_section('default') and config.has_option('default', 'adfs_netid'):
-        return config['default']['adfs_netid']
+    config[profile] = {'region': region, 'adfs_netid': net_id}
+    with open(file, 'w') as configfile:
+        config.write(configfile)
+
+
+def load_last_netid(file, profile):
+    config = open_config_file(file)
+    if config.has_section(profile) and config.has_option(profile, 'adfs_netid'):
+        return config[profile]['adfs_netid']
     else:
         return ''
 
