@@ -6,12 +6,12 @@ from byu_awslogin import index
 
 @pytest.fixture
 def aws_config_file(tmpdir):
-    return tmpdir.dirpath(".aws/config")
+    return str(tmpdir.dirpath(".aws/config"))
 
 
 @pytest.fixture
 def aws_cred_file(tmpdir):
-    return tmpdir.dirpath(".aws/credentials")
+    return str(tmpdir.dirpath(".aws/credentials"))
 
 
 @pytest.fixture
@@ -71,7 +71,7 @@ def test_write_to_config_file(aws_config_file, profile):
 
 
 def test_load_last_netid(fake_config_file, profile):
-    assert index.load_last_netid(fake_config_file, profile) == 'fake_netid'
+    assert index.load_last_netid(str(fake_config_file), profile) == 'fake_netid'
 
 
 @pytest.mark.skip(reason="not sure how to test this yet")
