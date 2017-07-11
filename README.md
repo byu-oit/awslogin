@@ -5,7 +5,7 @@ Python script for CLI and SDK access to AWS via ADFS while requiring MFA access 
 BYU used to use the great [aws-adfs](https://github.com/venth/aws-adfs) CLI tool to login to our AWS accounts.  It worked great, especially the DUO 2FA support.  Eventually, we decided to write our own similar tool but make it BYU-specific so that we could taylor it to our needs (which basically means hard-code certain BYU-specific things) and remove some of the required parameters.  Since this tool will be used by BYU employees only we had that option.  We then morphed it a little more for our use cases.  This isn't something that you could use outside of BYU, sorry.
 
 ## Installation
-* Install Python 3.x using your preferred method.
+* Install Python 3.x using your preferred method. See the [installation options](INSTALLATION_OPTIONS.md) page for step by step instructions for installing in various environments.
   * See https://www.python.org/downloads/ for a windows installation method.
   * In linux you may be able to use apt, rpm or https://www.python.org/downloads/.
   * In Mac you can use homebrew, macports or https://www.python.org/downloads/.
