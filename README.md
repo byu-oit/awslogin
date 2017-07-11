@@ -33,7 +33,7 @@ To use it:
 
 ## TODO
 * gracefully handle the error case when the duo push is rejected
-* Add support for profiles
+* Add support for profiles (@dsw88 is this already done?)
 * Authenticate once for 8 hours and rerun `awslogin` to relogin
 * Write tests
   * roles.py

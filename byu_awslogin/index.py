@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import sys
 import fire
 import getpass
 import configparser
@@ -72,6 +73,9 @@ def cli(account=None, role=None, profile='default'):
 
 
 def main():
+    if not sys.version.startswith('3.6'):
+        sys.stderr.write("byu_awslogin requires python 3.6\n")
+        sys.exit(-1)
     fire.Fire(cli)
 
 
