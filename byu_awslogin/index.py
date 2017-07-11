@@ -31,6 +31,12 @@ def cli(account=None, role=None, profile='default'):
     ####
     html_response, session, auth_signature, duo_request_signature = authenticate(username, password)
 
+    # Overwrite and delete the credential variables, just for safety
+    username = '##############################################'
+    password = '##############################################'
+    del username
+    del password
+
     ####
     # Obtain the roles available to assume
     ####
@@ -46,24 +52,23 @@ def cli(account=None, role=None, profile='default'):
     ####
     # Ask user which role to assume
     ####
-    account_name, role_name, chosen_role = ask_which_role_to_assume(account_names, principal_roles, account, role)
+    account_roles = ask_which_role_to_assume(account_names, principal_roles, account, role)
 
     ####
-    # Assume role and set in the environment
+    # Assume roles and set in the environment
     ####
-    aws_session_token = assume_role(*chosen_role, assertion)
+    for account_role in account_roles:
+        aws_session_token = assume_role(account_role, assertion)
 
-    check_for_aws_dir()
-    write_to_cred_file(aws_file('creds'), aws_session_token, profile)
-    write_to_config_file(aws_file('config'), net_id, 'us-west-2', profile)
+        # If assuming roles across all accounts, then use the account name as the profile name
+        if account == 'all':
+            profile = account_role.account_name
 
-    print("Now logged into {}@{}".format(role_name, account_name))
+        check_for_aws_dir()
+        write_to_cred_file(aws_file('creds'), aws_session_token, profile)
+        write_to_config_file(aws_file('config'), net_id, 'us-west-2', profile)
 
-    # Overwrite and delete the credential variables, just for safety
-    username = '##############################################'
-    password = '##############################################'
-    del username
-    del password
+        print("Now logged into {}@{}".format(account_role.role_name, account_role.account_name))
 
 
 def main():
@@ -90,17 +95,20 @@ def check_for_aws_dir(directory="{}/.aws".format(expanduser('~'))):
 
 def write_to_cred_file(file, aws_session_token, profile):
     config = open_config_file(file)
-    config[profile] = {'aws_access_key_id': aws_session_token['Credentials']['AccessKeyId'],
-                       'aws_secret_access_key': aws_session_token['Credentials']['SecretAccessKey'],
-                       'aws_session_token': aws_session_token['Credentials']['SessionToken']
-                       }
+    config[profile] = {
+        'aws_access_key_id': aws_session_token['Credentials']['AccessKeyId'],
+        'aws_secret_access_key': aws_session_token['Credentials']['SecretAccessKey'],
+        'aws_session_token': aws_session_token['Credentials']['SessionToken']
+    }
     with open(file, 'w') as configfile:
         config.write(configfile)
 
 
 def write_to_config_file(file, net_id, region, profile):
     config = open_config_file(file)
-    config[profile] = {'region': region, 'adfs_netid': net_id}
+    config[profile] = {
+        'region': region, 'adfs_netid': net_id
+    }
     with open(file, 'w') as configfile:
         config.write(configfile)
 
