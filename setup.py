@@ -5,8 +5,8 @@ import sys
 import subprocess
 from setuptools import setup, find_packages
 
-if int(sys.version[0]) < 3:
-    sys.stderr.write("byu_awslogin requires python 3\n")
+if not sys.version.startswith('3.6'):
+    sys.stderr.write("byu_awslogin requires python 3.6\n")
     sys.exit(-1)
 
 subprocess.check_call('pandoc --from=markdown_github --to=rst --output=README.rst README.md', shell=True)
