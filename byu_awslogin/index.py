@@ -6,6 +6,15 @@ import fire
 import getpass
 import configparser
 from os.path import expanduser
+try:
+    import lxml.etree as ET
+except ImportError:
+    import platform
+    if platform.system() == 'Windows':
+        print('awslogin will not run on your machine yet.  Please follow the instructions at https://github.com/byu-oit/awslogin/releases/tag/lxml to get it running.')
+        sys.exit(1)
+    else:
+        raise
 from .adfs_auth import authenticate
 from .assume_role import ask_which_role_to_assume, assume_role
 from .roles import action_url_on_validation_success, retrieve_roles_page
