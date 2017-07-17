@@ -39,9 +39,10 @@ awslogin defaults to the default profile in your ~/.aws/config and
 want to save in your ~/.aws files make sure to do that before running
 awslogin.***
 
-| Once you're logged in, you can execute commands using the AWS CLI or
+Once you're logged in, you can execute commands using the AWS CLI or 
 AWS SDK. Try running ``aws s3 ls``.
-| Currently, awslogin tokens are only valid for 1 hour due to the
+
+Currently, awslogin tokens are only valid for 1 hour due to the 
 assume\_role\_with\_saml AWS API call has a max timeout of 1 hour.
 
 To use it:
