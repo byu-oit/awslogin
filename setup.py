@@ -9,10 +9,8 @@ if not sys.version.startswith('3.6'):
     sys.stderr.write("byu_awslogin requires python 3.6\n")
     sys.exit(-1)
 
-subprocess.check_call('pandoc --from=markdown_github --to=rst --output=README.rst README.md', shell=True)
 with open("README.rst") as rm_file:
     long_description = rm_file.read()
-os.remove('README.rst')
 
 def get_requirements():
     with open('requirements.txt') as obj:
