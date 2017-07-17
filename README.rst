@@ -21,7 +21,7 @@ Installation
 ------------
 
 -  Install Python 3.x using your preferred method. See the `installation
-   options <INSTALLATION_OPTIONS.md>`__ page for step by step
+   options <https://github.com/byu-oit/awslogin/blob/master/INSTALLATION_OPTIONS.md>`__ page for step by step
    instructions for installing in various environments.
 -  See https://www.python.org/downloads/ for a windows installation
    method.
@@ -76,6 +76,5 @@ TODO
 -  Add support for profiles (@dsw88 is this already done?)
 -  Authenticate once for 8 hours and rerun ``awslogin`` to relogin
 -  Write tests
--  roles.py
--  assume\_role.py
-
+  -  roles.py
+  -  assume\_role.py
