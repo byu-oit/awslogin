@@ -301,7 +301,7 @@ def _begin_authentication_transaction(duo_host, sid, preferred_factor, preferred
     json_response = response.json()
     if json_response['stat'] != 'OK':
         if json_response['message'] == 'Unknown authentication method.':
-            print("\033[91mGeneric Authenticaion Failure.\n\033[93mAre you enrolled in Duo MFA?\nDid you enable Duo automatic push?\033[0m")
+            print("\033[91mGeneric Authentication Failure.\n\033[93mAre you enrolled in Duo MFA?\nDid you enable Duo automatic push?\033[0m")
             os._exit(1)
         else:    
              raise RuntimeError(
