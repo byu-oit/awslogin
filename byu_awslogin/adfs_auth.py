@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup
 import re
 import lxml.etree as ET
 from urllib.parse import urlparse, parse_qs
+import os
 
 # idpentryurl: The initial url that starts the authentication process.
 adfs_entry_url = 'https://awslogin.byu.edu:443/adfs/ls/IdpInitiatedSignOn.aspx?loginToRp=urn:amazon:webservices'
@@ -300,9 +301,8 @@ def _begin_authentication_transaction(duo_host, sid, preferred_factor, preferred
     json_response = response.json()
     if json_response['stat'] != 'OK':
         if json_response['message'] == 'Unknown authentication method.':
-             raise RuntimeError(
-                 u'Generic Authentication Failure.\nAre you enrolled in Duo MFA?\nDid you enable Duo automatic push?'
-             )
+            print("\033[91mGeneric Authenticaion Failure.\n\033[93mAre you enrolled in Duo MFA?\nDid you enable Duo automatic push?\033[0m")
+            os._exit(1)
         else:    
              raise RuntimeError(
                  u'Cannot begin authentication process. The error response: {}'.format(response.text)
