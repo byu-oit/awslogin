@@ -299,10 +299,14 @@ def _begin_authentication_transaction(duo_host, sid, preferred_factor, preferred
 
     json_response = response.json()
     if json_response['stat'] != 'OK':
-        raise RuntimeError(
-            u'Cannot begin authentication process. The error response: {}'.format(response.text)
-        )
-
+        if json_response['message'] == 'Unknown authentication method.':
+             raise RuntimeError(
+                 u'Generic Authentication Failure.\nAre you enrolled in Duo MFA?\nDid you enable Duo automatic push?'
+             )
+        else:    
+             raise RuntimeError(
+                 u'Cannot begin authentication process. The error response: {}'.format(response.text)
+             )
     return json_response['response']['txid']
 
 
