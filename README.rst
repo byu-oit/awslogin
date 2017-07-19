@@ -2,13 +2,13 @@ awslogin
 ========
 
 Python script for CLI and SDK access to AWS via ADFS while requiring MFA
-access using https://duo.com/
+access using `<https://duo.com/>`_
 
 History and Purpose
 -------------------
 
 BYU used to use the great
-`aws-adfs <https://github.com/venth/aws-adfs>`__ CLI tool to login to
+`aws-adfs <https://github.com/venth/aws-adfs>`_ CLI tool to login to
 our AWS accounts. It worked great, especially the DUO 2FA support.
 Eventually, we decided to write our own similar tool but make it
 BYU-specific so that we could taylor it to our needs (which basically
@@ -21,14 +21,14 @@ Installation
 ------------
 
 -  Install Python 3.x using your preferred method. See the `installation
-   options <https://github.com/byu-oit/awslogin/blob/master/INSTALLATION_OPTIONS.md>`__ page for step by step
+   options <https://github.com/byu-oit/awslogin/blob/master/INSTALLATION_OPTIONS.md>`_ page for step by step
    instructions for installing in various environments.
--  See https://www.python.org/downloads/ for a windows installation
+-  See `<https://www.python.org/downloads/>`_ for a windows installation
    method.
 -  In linux you may be able to use apt, rpm or
-   https://www.python.org/downloads/.
+   `<https://www.python.org/downloads/>`_.
 -  In Mac you can use homebrew, macports or
-   https://www.python.org/downloads/.
+   `<https://www.python.org/downloads/>`_.
 -  Run ``pip3 install byu-awslogin``
 
 Usage
@@ -39,9 +39,10 @@ awslogin defaults to the default profile in your ~/.aws/config and
 want to save in your ~/.aws files make sure to do that before running
 awslogin.***
 
-| Once you're logged in, you can execute commands using the AWS CLI or
+Once you're logged in, you can execute commands using the AWS CLI or 
 AWS SDK. Try running ``aws s3 ls``.
-| Currently, awslogin tokens are only valid for 1 hour due to the
+
+Currently, awslogin tokens are only valid for 1 hour due to the 
 assume\_role\_with\_saml AWS API call has a max timeout of 1 hour.
 
 To use it:
@@ -76,5 +77,5 @@ TODO
 -  Add support for profiles (@dsw88 is this already done?)
 -  Authenticate once for 8 hours and rerun ``awslogin`` to relogin
 -  Write tests
-  -  roles.py
-  -  assume\_role.py
+   -  roles.py
+   -  assume\_role.py
