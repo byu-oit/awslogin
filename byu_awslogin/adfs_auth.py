@@ -3,13 +3,15 @@
 # figuring this out
 #
 
+import os
+import re
+from urllib.parse import urlparse, parse_qs
+
+import lxml.etree as ET
 import requests
 from bs4 import BeautifulSoup
-import re
-import lxml.etree as ET
-from urllib.parse import urlparse, parse_qs
-import os
-from consoleeffects import Colors
+
+from .consoleeffects import Colors
 
 # idpentryurl: The initial url that starts the authentication process.
 adfs_entry_url = 'https://awslogin.byu.edu:443/adfs/ls/IdpInitiatedSignOn.aspx?loginToRp=urn:amazon:webservices'

@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 
+import configparser
+import getpass
 import os
 import sys
-import fire
-import getpass
-import configparser
 from os.path import expanduser
-from consoleeffects import Colors
+
+import fire
+
+from .consoleeffects import Colors
 
 try:
     import lxml.etree as ET

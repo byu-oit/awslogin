@@ -1,7 +1,9 @@
 import boto3
 import botocore
 from botocore import client
-from consoleeffects import Colors
+
+from .consoleeffects import Colors
+
 
 class AccountRole:
 
