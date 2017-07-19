@@ -9,6 +9,7 @@ import re
 import lxml.etree as ET
 from urllib.parse import urlparse, parse_qs
 import os
+from consoleeffects import Colors
 
 # idpentryurl: The initial url that starts the authentication process.
 adfs_entry_url = 'https://awslogin.byu.edu:443/adfs/ls/IdpInitiatedSignOn.aspx?loginToRp=urn:amazon:webservices'
@@ -301,7 +302,7 @@ def _begin_authentication_transaction(duo_host, sid, preferred_factor, preferred
     json_response = response.json()
     if json_response['stat'] != 'OK':
         if json_response['message'] == 'Unknown authentication method.':
-            print("\033[91mGeneric Authentication Failure.\n\033[93mAre you enrolled in Duo MFA?\nDid you enable Duo automatic push?\033[0m")
+            print("{}Generic Authentication Failure.\n{}Are you enrolled in Duo MFA?\nDid you enable Duo automatic push?{}".format(Colors.lred, Colors.lyellow, Colors.normal))
             os._exit(1)
         else:    
              raise RuntimeError(

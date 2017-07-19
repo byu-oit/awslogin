@@ -6,6 +6,8 @@ import fire
 import getpass
 import configparser
 from os.path import expanduser
+from consoleeffects import Colors
+
 try:
     import lxml.etree as ET
 except ImportError:
@@ -24,12 +26,12 @@ def cli(account=None, role=None, profile='default'):
     # Get the federated credentials from the user
     cached_netid = load_last_netid(aws_file('config'), profile)
     if cached_netid:
-        net_id_prompt = 'BYU Net ID [{}]: '.format(cached_netid)
+        net_id_prompt = 'BYU Net ID [{}{}{}]: '.format(Colors.blue,cached_netid,Colors.normal)
     else:
         net_id_prompt = 'BYU Net ID: '
     net_id = input(net_id_prompt) or cached_netid
     if "@byu.local" in net_id:
-        print('@byu.local is not required')
+        print('{}@byu.local{} is not required'.format(Colors.lblue,Colors.normal))
         username = net_id
     else:
         username = '{}@byu.local'.format(net_id)
@@ -77,13 +79,16 @@ def cli(account=None, role=None, profile='default'):
         check_for_aws_dir()
         write_to_cred_file(aws_file('creds'), aws_session_token, profile)
         write_to_config_file(aws_file('config'), net_id, 'us-west-2', profile)
-
-        print("Now logged into {}@{}".format(account_role.role_name, account_role.account_name))
+    
+        if account_role.role_name == "AccountAdministrator":
+            print("Now logged into {}{}{}@{}{}{}".format(Colors.red,account_role.role_name, Colors.white, Colors.yellow,account_role.account_name,Colors.normal))
+        else:
+            print("Now logged into {}{}{}@{}{}{}".format(Colors.cyan,account_role.role_name, Colors.white, Colors.yellow,account_role.account_name,Colors.normal))
 
 
 def main():
     if not sys.version.startswith('3.6'):
-        sys.stderr.write("byu_awslogin requires python 3.6\n")
+        sys.stderr.write("{}byu_awslogin requires python 3.6{}\n".format(Colors.red,Colors.white))
         sys.exit(-1)
     fire.Fire(cli)
 
