@@ -23,8 +23,13 @@ from .adfs_auth import authenticate
 from .assume_role import ask_which_role_to_assume, assume_role
 from .roles import action_url_on_validation_success, retrieve_roles_page
 
+__VERSION__ = '0.11.2'
 
-def cli(account=None, role=None, profile='default'):
+
+def cli(account=None, role=None, profile='default', version=False):
+    if version:
+        print(f'awslogin version: {__VERSION__}')
+        return
     # Get the federated credentials from the user
     cached_netid = load_last_netid(aws_file('config'), profile)
     if cached_netid:

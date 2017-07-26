@@ -4,6 +4,7 @@ import os
 import sys
 import subprocess
 from setuptools import setup, find_packages
+from byu_awslogin import index
 
 if not sys.version.startswith('3.6'):
     sys.stderr.write("byu_awslogin requires python 3.6\n")
@@ -17,9 +18,7 @@ def get_requirements():
         lines = [dep for dep in obj.read().split('\n') if dep]
         return lines
 
-VERSION = ''
-with open('VERSION') as verobj:
-    VERSION = verobj.read()
+VERSION = index.__VERSION__
 
 setup(name='byu_awslogin',
       version=VERSION,
