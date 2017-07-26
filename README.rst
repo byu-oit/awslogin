@@ -54,7 +54,14 @@ To use it:
    arguments as well.
 -  Run ``awslogin --profile <profile name>`` to specifiy an alternative
    profile
+-  Run ``awslogin --status`` for the current status of the default profile
+-  Run ``awslogin --status --profile=dev`` for the current status of the
+   dev profile
+-  Run ``awslogin --status --profile=all`` for the current status of the
+   all profiles
+-  Run ``awslogin --version`` to display the running version of awslogin
 -  Run ``awslogin -- --help`` for full help message
+
 
 Reporting bugs or requesting features
 -------------------------------------
