@@ -74,6 +74,7 @@ def test_load_last_netid(fake_config_file, profile):
     assert index.load_last_netid(str(fake_config_file), profile) == 'fake_netid'
 
 
-@pytest.mark.skip(reason="not sure how to test this yet")
-def test_cli():
-    pass
+def test_cli_version(capfd):
+    index.cli(version=True)
+    out, err = capfd.readouterr()
+    assert out.strip() == f'awslogin version: {index.__VERSION__}'
