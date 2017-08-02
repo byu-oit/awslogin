@@ -1,6 +1,7 @@
 import pytest
 import os.path
 import configparser
+import datetime
 from byu_awslogin import index
 
 
@@ -25,14 +26,21 @@ def read_config_file(file):
 def profile():
     return 'default'
 
+
 @pytest.fixture
 def fake_config_file(tmpdir):
     dir = tmpdir.dirpath(".aws/")
     file = dir + 'config'
+    exp_date = datetime.datetime.now() + datetime.timedelta(hours=1)
     if not os.path.exists(dir):
         os.makedirs(dir)
     config = configparser.ConfigParser()
-    config['default'] = {'region': 'fake-region-1', 'adfs_netid': 'fake_netid'}
+    config['default'] = {
+        'region': 'fake-region-1',
+        'adfs_netid': 'fake_netid',
+        'adfs_role': 'FakeRole@FakeAccount',
+        'adfs_expires': exp_date.strftime('%m-%d-%Y %H:%M')
+    }
     with open(file, 'w') as write_file:
         config.write(write_file)
     return file
@@ -65,15 +73,43 @@ def test_write_to_cred_file(aws_cred_file, profile):
 def test_write_to_config_file(aws_config_file, profile):
     net_id = 'fake_netid'
     region = 'fakeRegion'
-    index.write_to_config_file(aws_config_file, net_id, region, profile)
+    role = 'FakeRole'
+    account = 'FakeAccount'
+    index.write_to_config_file(aws_config_file, net_id, region, profile, role, account)
     config = read_config_file(aws_config_file)
-    assert config['default'] == {'region': 'fakeRegion', 'adfs_netid': 'fake_netid'}
+    assert config.has_section('default')
+    assert config.has_option('default', 'region')
+    assert config.has_option('default', 'adfs_netid')
+    assert config.has_option('default', 'adfs_role')
+    assert config.has_option('default', 'adfs_expires')
 
 
 def test_load_last_netid(fake_config_file, profile):
     assert index.load_last_netid(str(fake_config_file), profile) == 'fake_netid'
 
 
-@pytest.mark.skip(reason="not sure how to test this yet")
-def test_cli():
-    pass
+def test_cli_version(capfd):
+    index.cli(version=True)
+    out, err = capfd.readouterr()
+    assert out.strip() == f'awslogin version: {index.__VERSION__}'
+
+
+def test_get_status(fake_config_file, profile, capfd):
+    index.get_status(str(fake_config_file), profile)
+    out, err = capfd.readouterr()
+    assert 'FakeRole@FakeAccount' in out
+
+
+def test_get_status_fail(fake_config_file, capfd):
+    index.get_status(str(fake_config_file), 'fake')
+    out, err = capfd.readouterr()
+    assert "Couldn't find profile:" in out
+
+
+def test_check_expired():
+    expired = datetime.datetime.now() - datetime.timedelta(hours=1)
+    result = index.check_expired(expired.strftime('%m-%d-%Y %H:%M'))
+    assert result == 'Expired'
+    expires = datetime.datetime.now() + datetime.timedelta(hours=1)
+    result = index.check_expired(expires.strftime('%m-%d-%Y %H:%M'))
+    assert result == 'Expires'

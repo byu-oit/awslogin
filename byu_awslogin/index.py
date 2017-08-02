@@ -4,6 +4,7 @@ import configparser
 import getpass
 import os
 import sys
+import datetime
 from os.path import expanduser
 
 import fire
@@ -23,8 +24,16 @@ from .adfs_auth import authenticate
 from .assume_role import ask_which_role_to_assume, assume_role
 from .roles import action_url_on_validation_success, retrieve_roles_page
 
+__VERSION__ = '0.11.2'
 
-def cli(account=None, role=None, profile='default'):
+
+def cli(account=None, role=None, profile='default', version=False, status=False):
+    if version:
+        print(f'awslogin version: {__VERSION__}')
+        return
+    if status:
+        get_status(aws_file('config'), profile)
+        return
     # Get the federated credentials from the user
     cached_netid = load_last_netid(aws_file('config'), profile)
     if cached_netid:
@@ -80,7 +89,7 @@ def cli(account=None, role=None, profile='default'):
 
         check_for_aws_dir()
         write_to_cred_file(aws_file('creds'), aws_session_token, profile)
-        write_to_config_file(aws_file('config'), net_id, 'us-west-2', profile)
+        write_to_config_file(aws_file('config'), net_id, 'us-west-2', profile, account_role.role_name, account_role.account_name)
     
         if account_role.role_name == "AccountAdministrator":
             print("Now logged into {}{}{}@{}{}{}".format(Colors.red,account_role.role_name, Colors.white, Colors.yellow,account_role.account_name,Colors.normal))
@@ -124,10 +133,15 @@ def write_to_cred_file(file, aws_session_token, profile):
         config.write(configfile)
 
 
-def write_to_config_file(file, net_id, region, profile):
+def write_to_config_file(file, net_id, region, profile, role, account):
+    one_hour = datetime.timedelta(hours=1)
+    expires = datetime.datetime.now() + one_hour
     config = open_config_file(file)
     config[profile] = {
-        'region': region, 'adfs_netid': net_id
+        'region': region,
+        'adfs_netid': net_id,
+        'adfs_role': f'{role}@{account}',
+        'adfs_expires': expires.strftime('%m-%d-%Y %H:%M')
     }
     with open(file, 'w') as configfile:
         config.write(configfile)
@@ -139,6 +153,45 @@ def load_last_netid(file, profile):
         return config[profile]['adfs_netid']
     else:
         return ''
+
+
+def get_status_message(config, profile):
+    if config.has_option(profile, 'adfs_role') and config.has_option(profile, 'adfs_expires'):
+        expires = check_expired(config[profile]['adfs_expires'])
+        account_name = f"{Colors.cyan}{config[profile]['adfs_role']}"
+        if expires == 'Expired':
+            expires_msg = f"{Colors.red}{expires} at: {config[profile]['adfs_expires']}"
+        else:
+            expires_msg = f"{Colors.yellow}{expires} at: {config[profile]['adfs_expires']}"
+        return f"{account_name} {Colors.white}- {expires_msg}"
+    else:
+        return f"{Colors.red}Couldn't find status info"
+
+
+def get_status(file, profile='default'):
+    config = open_config_file(file)
+    if profile == 'all':
+        for x in config:
+            if x == 'DEFAULT':
+                continue
+            message = get_status_message(config, x)
+            print(f"{Colors.white}{x} - {message}")
+        return
+    else:
+        if config.has_section(profile):
+            message = get_status_message(config, profile)
+            print(message)
+        else:
+            print(f"{Colors.red}Couldn't find profile: {profile}")
+        return
+
+
+def check_expired(expires):
+    expires = datetime.datetime.strptime(expires, '%m-%d-%Y %H:%M')
+    if expires > datetime.datetime.now():
+        return 'Expires'
+    else:
+        return 'Expired'
 
 
 if __name__ == '__main__':
