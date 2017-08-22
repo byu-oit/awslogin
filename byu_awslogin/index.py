@@ -23,7 +23,7 @@ from .adfs_auth import authenticate
 from .assume_role import ask_which_role_to_assume, assume_role
 from .roles import action_url_on_validation_success, retrieve_roles_page
 
-__VERSION__ = '0.11.2'
+__VERSION__ = '0.11.3'
 
 
 @click.command()
@@ -34,8 +34,7 @@ __VERSION__ = '0.11.2'
 @click.option('-s', '--status', is_flag=True, default=False, help='Display current logged in status. Use profile all to see all statuses')
 def cli(account, role, profile, status):
     if not sys.version.startswith('3.6'):
-        sys.stderr.write("{}byu_awslogin requires python 3.6{}\n".format(
-        Colors.red, Colors.white))
+        sys.stderr.write("{}byu_awslogin requires python 3.6{}\n".format(Colors.red, Colors.white))
         sys.exit(-1)
     if status:
         get_status(aws_file('config'), profile)
