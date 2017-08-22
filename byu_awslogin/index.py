@@ -6,6 +6,7 @@ import click
 import os
 import sys
 import datetime
+import platform
 from os.path import expanduser
 
 from .consoleeffects import Colors
@@ -13,7 +14,6 @@ from .consoleeffects import Colors
 try:
     import lxml.etree as ET
 except ImportError:
-    import platform
     if platform.system() == 'Windows':
         print('awslogin will not run on your machine yet.  Please follow the instructions at https://github.com/byu-oit/awslogin/releases/tag/lxml to get it running.')
         sys.exit(1)
@@ -24,6 +24,17 @@ from .assume_role import ask_which_role_to_assume, assume_role
 from .roles import action_url_on_validation_success, retrieve_roles_page
 
 __VERSION__ = '0.11.3'
+
+# Enable VT Mode on windows terminal code from:
+# https://bugs.python.org/issue29059
+# This works not sure if it the best way or not
+if platform.system().lower() == 'windows':
+    from ctypes import windll, c_int, byref
+    stdout_handle = windll.kernel32.GetStdHandle(c_int(-11))
+    mode = c_int(0)
+    windll.kernel32.GetConsoleMode(c_int(stdout_handle), byref(mode))
+    mode = c_int(mode.value | 4)
+    windll.kernel32.SetConsoleMode(c_int(stdout_handle), mode)
 
 
 @click.command()
