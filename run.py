@@ -1,4 +1,11 @@
-from byu_awslogin import index
-import fire
+#!/usr/local/opt/python3/bin/python3.6
 
-fire.Fire(index.cli)
+# -*- coding: utf-8 -*-
+import re
+import sys
+
+from byu_awslogin.index import cli
+
+if __name__ == '__main__':
+    sys.argv[0] = re.sub(r'(-script\.pyw?|\.exe)?$', '', sys.argv[0])
+    sys.exit(cli())

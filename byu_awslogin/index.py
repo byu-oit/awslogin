@@ -2,12 +2,11 @@
 
 import configparser
 import getpass
+import click
 import os
 import sys
 import datetime
 from os.path import expanduser
-
-import fire
 
 from .consoleeffects import Colors
 
@@ -27,10 +26,17 @@ from .roles import action_url_on_validation_success, retrieve_roles_page
 __VERSION__ = '0.11.2'
 
 
-def cli(account=None, role=None, profile='default', version=False, status=False):
-    if version:
-        print(f'awslogin version: {__VERSION__}')
-        return
+@click.command()
+@click.version_option(version=__VERSION__)
+@click.option('-a', '--account', help='Account to use')
+@click.option('-r', '--role', help='Role to use')
+@click.option('-p', '--profile', default='default', help='Profile to use')
+@click.option('-s', '--status', is_flag=True, default=False, help='Display current logged in status')
+def cli(account, role, profile, status):
+    if not sys.version.startswith('3.6'):
+        sys.stderr.write("{}byu_awslogin requires python 3.6{}\n".format(
+        Colors.red, Colors.white))
+        sys.exit(-1)
     if status:
         get_status(aws_file('config'), profile)
         return
@@ -95,13 +101,6 @@ def cli(account=None, role=None, profile='default', version=False, status=False)
             print("Now logged into {}{}{}@{}{}{}".format(Colors.red,account_role.role_name, Colors.white, Colors.yellow,account_role.account_name,Colors.normal))
         else:
             print("Now logged into {}{}{}@{}{}{}".format(Colors.cyan,account_role.role_name, Colors.white, Colors.yellow,account_role.account_name,Colors.normal))
-
-
-def main():
-    if not sys.version.startswith('3.6'):
-        sys.stderr.write("{}byu_awslogin requires python 3.6{}\n".format(Colors.red,Colors.white))
-        sys.exit(-1)
-    fire.Fire(cli)
 
 
 def aws_file(file_type):
@@ -195,4 +194,4 @@ def check_expired(expires):
 
 
 if __name__ == '__main__':
-    main()
+    cli()
