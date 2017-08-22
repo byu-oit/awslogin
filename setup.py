@@ -32,7 +32,7 @@ setup(name='byu_awslogin',
       install_requires=get_requirements(),
       zip_safe=True,
       entry_points={
-          'console_scripts': ['awslogin=byu_awslogin.index:main']
+          'console_scripts': ['awslogin=byu_awslogin.index:cli']
       },
       classifiers=[
           'Development Status :: 5 - Production/Stable',
