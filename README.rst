@@ -55,12 +55,12 @@ To use it:
 -  Run ``awslogin --profile <profile name>`` to specifiy an alternative
    profile
 -  Run ``awslogin --status`` for the current status of the default profile
--  Run ``awslogin --status --profile=dev`` for the current status of the
+-  Run ``awslogin --status --profile dev`` for the current status of the
    dev profile
--  Run ``awslogin --status --profile=all`` for the current status of the
+-  Run ``awslogin --status --profile all`` for the current status of the
    all profiles
 -  Run ``awslogin --version`` to display the running version of awslogin
--  Run ``awslogin -- --help`` for full help message
+-  Run ``awslogin --help`` for full help message
 
 
 Reporting bugs or requesting features
@@ -72,7 +72,7 @@ Reporting bugs or requesting features
 Deploying changes
 -----------------
 
--  Update the version in the VERSION file.
+-  Update the version.
 -  Commit the change and push. Handel-codepipeline will run the
    automated tests and if they pass it will build and upload a new
    version to pypi.
@@ -81,7 +81,6 @@ TODO
 ----
 
 -  gracefully handle the error case when the duo push is rejected
--  Add support for profiles (@dsw88 is this already done?)
 -  Authenticate once for 8 hours and rerun ``awslogin`` to relogin
 -  Write tests
    -  roles.py

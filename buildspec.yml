@@ -4,12 +4,12 @@ phases:
   pre_build:
     commands:
       - pip install -r requirements.txt
+      - pip install pytest
   build:
     commands: 
       - pytest
   post_build:
     commands: 
-      - python pypi_auth.py
-      - rm -fr dist
-      - python setup.py sdist bdist_wheel
-      - twine upload dist/*
+artifacts:
+  files:
+    - '**/*'

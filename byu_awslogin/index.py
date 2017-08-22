@@ -28,10 +28,10 @@ __VERSION__ = '0.11.2'
 
 @click.command()
 @click.version_option(version=__VERSION__)
-@click.option('-a', '--account', help='Account to use')
-@click.option('-r', '--role', help='Role to use')
-@click.option('-p', '--profile', default='default', help='Profile to use')
-@click.option('-s', '--status', is_flag=True, default=False, help='Display current logged in status')
+@click.option('-a', '--account', help='Account to login with')
+@click.option('-r', '--role', help='Role to use after login')
+@click.option('-p', '--profile', default='default', help='Profile to use store credentials. Defaults to default')
+@click.option('-s', '--status', is_flag=True, default=False, help='Display current logged in status. Use profile all to see all statuses')
 def cli(account, role, profile, status):
     if not sys.version.startswith('3.6'):
         sys.stderr.write("{}byu_awslogin requires python 3.6{}\n".format(

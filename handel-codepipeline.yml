@@ -12,4 +12,7 @@ pipelines:
       branch: master
     - type: codebuild
       name: Build
-      build_image: python:3.6.1
+      build_image: python:3.6
+    - type: pypi
+      name: pypiDeploy
+      build_image: python:3.6
