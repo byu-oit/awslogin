@@ -80,7 +80,6 @@ Deploying changes
 TODO
 ----
 
--  gracefully handle the error case when the duo push is rejected
 -  Authenticate once for 8 hours and rerun ``awslogin`` to relogin
 -  Write tests
    -  roles.py
