@@ -14,44 +14,9 @@ _headers = {
     'Accept': 'text/plain, */*; q=0.01',
 }
 
-def extract(saml_page_html_soup):
-    # Retrieve Base64-encoded SAML assertion from form SAMLResponse input field
-    saml_assertion = saml_page_html_soup.find('form', {"name":"hiddenform"}).find('input', {"name":"SAMLResponse"})['value']
 
-    # If we did not get an error, but also do not have an assertion,
-    # then the user needs to authenticate
-    if not saml_assertion:
-        print("Unknown error: No assertion returned")
-        exit(1)
-
-    # Parse the returned assertion and extract the authorized roles
-    saml = ET.fromstring(base64.b64decode(saml_assertion))
-
-    # Find all roles offered by the assertion
-    raw_roles = saml.findall(
-        './/{*}Attribute[@Name="https://aws.amazon.com/SAML/Attributes/Role"]/{*}AttributeValue'
-    )
-    aws_roles = [element.text.split(',') for element in raw_roles]
-
-    # Note the format of the attribute value is provider_arn, role_arn
-    principal_roles = [role for role in aws_roles if ':saml-provider/' in role[0]]
-
-    aws_session_duration = default_session_duration
-    # Retrieve session duration
-    for element in saml.findall('.//{*}Attribute[@Name="https://aws.amazon.com/SAML/Attributes/SessionDuration"]/{*}AttributeValue'):
-        aws_session_duration = int(element.text)
-        
-    account_names = _get_account_names(saml_assertion)
-
-    return account_names, principal_roles, saml_assertion, aws_session_duration
-
-
-def action_url_on_validation_success(login_response_html_soup):
-    options_form = login_response_html_soup.find('form', id='options')
-    return options_form['action']
-
-
-def retrieve_roles_page(roles_page_url, login_response_html_soup, session, auth_signature, duo_request_signature):
+def retrieve_roles_page(login_response_html_soup, session, auth_signature, duo_request_signature):
+    roles_page_url = _action_url_on_validation_success(login_response_html_soup)
     context = _context(login_response_html_soup)
     signed_response = '{}:{}'.format(auth_signature, _app(duo_request_signature))
     roles_page_response = session.post(
@@ -74,7 +39,46 @@ def retrieve_roles_page(roles_page_url, login_response_html_soup, session, auth_
         )
 
     roles_page_html_soup = BeautifulSoup(roles_page_response.text, 'lxml')
-    return extract(roles_page_html_soup)
+    return _extract(roles_page_html_soup)
+
+
+def _action_url_on_validation_success(login_response_html_soup):
+    options_form = login_response_html_soup.find('form', id='options')
+    return options_form['action']
+
+
+def _extract(saml_page_html_soup):
+    # Retrieve Base64-encoded SAML assertion from form SAMLResponse input field
+    saml_assertion = saml_page_html_soup.find('form', {"name": "hiddenform"}).find('input', {"name": "SAMLResponse"})[
+        'value']
+
+    # If we did not get an error, but also do not have an assertion,
+    # then the user needs to authenticate
+    if not saml_assertion:
+        print("Unknown error: No assertion returned")
+        exit(1)
+
+    # Parse the returned assertion and extract the authorized roles
+    saml = ET.fromstring(base64.b64decode(saml_assertion))
+
+    # Find all roles offered by the assertion
+    raw_roles = saml.findall(
+        './/{*}Attribute[@Name="https://aws.amazon.com/SAML/Attributes/Role"]/{*}AttributeValue'
+    )
+    aws_roles = [element.text.split(',') for element in raw_roles]
+
+    # Note the format of the attribute value is provider_arn, role_arn
+    principal_roles = [role for role in aws_roles if ':saml-provider/' in role[0]]
+
+    aws_session_duration = default_session_duration
+    # Retrieve session duration
+    for element in saml.findall(
+            './/{*}Attribute[@Name="https://aws.amazon.com/SAML/Attributes/SessionDuration"]/{*}AttributeValue'):
+        aws_session_duration = int(element.text)
+
+    account_names = _get_account_names(saml_assertion)
+
+    return account_names, principal_roles, saml_assertion, aws_session_duration
 
 
 def _get_account_names(saml_assertion):
