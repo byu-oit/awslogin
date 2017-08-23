@@ -88,12 +88,6 @@ def test_load_last_netid(fake_config_file, profile):
     assert index.load_last_netid(str(fake_config_file), profile) == 'fake_netid'
 
 
-def test_cli_version(capfd):
-    index.cli(version=True)
-    out, err = capfd.readouterr()
-    assert out.strip() == f'awslogin version: {index.__VERSION__}'
-
-
 def test_get_status(fake_config_file, profile, capfd):
     index.get_status(str(fake_config_file), profile)
     out, err = capfd.readouterr()

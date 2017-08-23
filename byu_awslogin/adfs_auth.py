@@ -2,7 +2,7 @@
 # This file was adapted from https://github.com/venth/aws-adfs. Thanks to https://github.com/venth for his work on
 # figuring this out
 #
-
+import sys
 import os
 import re
 from urllib.parse import urlparse, parse_qs
@@ -161,6 +161,9 @@ def _authentication_result(
         )
 
     if json_response['response']['status_code'] != 'allow':
+        if json_response['response']['reason'] == 'User mistake' and json_response['response']['status'] == 'Login request denied.':
+            print('{}Duo Auth Denied'.format(Colors.red))
+            sys.exit(1)
         raise RuntimeError(
             u'There was an issue during retrieval of a code entered into the device.'
             u' The error response: {}'.format(

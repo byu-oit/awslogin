@@ -2,19 +2,18 @@
 
 import configparser
 import getpass
+import click
 import os
 import sys
 import datetime
+import platform
 from os.path import expanduser
-
-import fire
 
 from .consoleeffects import Colors
 
 try:
     import lxml.etree as ET
 except ImportError:
-    import platform
     if platform.system() == 'Windows':
         print('awslogin will not run on your machine yet.  Please follow the instructions at https://github.com/byu-oit/awslogin/releases/tag/lxml to get it running.')
         sys.exit(1)
@@ -24,13 +23,30 @@ from .adfs_auth import authenticate
 from .assume_role import ask_which_role_to_assume, assume_role
 from .roles import action_url_on_validation_success, retrieve_roles_page
 
-__VERSION__ = '0.11.2'
+__VERSION__ = '0.11.3'
+
+# Enable VT Mode on windows terminal code from:
+# https://bugs.python.org/issue29059
+# This works not sure if it the best way or not
+if platform.system().lower() == 'windows':
+    from ctypes import windll, c_int, byref
+    stdout_handle = windll.kernel32.GetStdHandle(c_int(-11))
+    mode = c_int(0)
+    windll.kernel32.GetConsoleMode(c_int(stdout_handle), byref(mode))
+    mode = c_int(mode.value | 4)
+    windll.kernel32.SetConsoleMode(c_int(stdout_handle), mode)
 
 
-def cli(account=None, role=None, profile='default', version=False, status=False):
-    if version:
-        print(f'awslogin version: {__VERSION__}')
-        return
+@click.command()
+@click.version_option(version=__VERSION__)
+@click.option('-a', '--account', help='Account to login with')
+@click.option('-r', '--role', help='Role to use after login')
+@click.option('-p', '--profile', default='default', help='Profile to use store credentials. Defaults to default')
+@click.option('-s', '--status', is_flag=True, default=False, help='Display current logged in status. Use profile all to see all statuses')
+def cli(account, role, profile, status):
+    if not sys.version.startswith('3.6'):
+        sys.stderr.write("{}byu_awslogin requires python 3.6{}\n".format(Colors.red, Colors.white))
+        sys.exit(-1)
     if status:
         get_status(aws_file('config'), profile)
         return
@@ -95,13 +111,6 @@ def cli(account=None, role=None, profile='default', version=False, status=False)
             print("Now logged into {}{}{}@{}{}{}".format(Colors.red,account_role.role_name, Colors.white, Colors.yellow,account_role.account_name,Colors.normal))
         else:
             print("Now logged into {}{}{}@{}{}{}".format(Colors.cyan,account_role.role_name, Colors.white, Colors.yellow,account_role.account_name,Colors.normal))
-
-
-def main():
-    if not sys.version.startswith('3.6'):
-        sys.stderr.write("{}byu_awslogin requires python 3.6{}\n".format(Colors.red,Colors.white))
-        sys.exit(-1)
-    fire.Fire(cli)
 
 
 def aws_file(file_type):
@@ -195,4 +204,4 @@ def check_expired(expires):
 
 
 if __name__ == '__main__':
-    main()
+    cli()
