@@ -1,14 +1,10 @@
 #!/usr/bin/env python3
 
-import configparser
+
 import getpass
 import click
-import os
 import sys
-import datetime
 import platform
-from os.path import expanduser
-
 from .consoleeffects import Colors
 
 try:
@@ -19,9 +15,11 @@ except ImportError:
         sys.exit(1)
     else:
         raise
+
 from .adfs_auth import authenticate
 from .assume_role import ask_which_role_to_assume, assume_role
-from .roles import action_url_on_validation_success, retrieve_roles_page
+from .roles import retrieve_roles_page
+from .data_cache import get_status, load_last_netid, write_to_config_file, write_to_cred_file
 
 __VERSION__ = '0.11.3'
 
@@ -44,24 +42,15 @@ if platform.system().lower() == 'windows':
 @click.option('-p', '--profile', default='default', help='Profile to use store credentials. Defaults to default')
 @click.option('-s', '--status', is_flag=True, default=False, help='Display current logged in status. Use profile all to see all statuses')
 def cli(account, role, profile, status):
-    if not sys.version.startswith('3.6'):
-        sys.stderr.write("{}byu_awslogin requires python 3.6{}\n".format(Colors.red, Colors.white))
-        sys.exit(-1)
+    _ensure_min_python_version()
+
+    # Display status and exit if the user specified the "-s" flag
     if status:
-        get_status(aws_file('config'), profile)
+        get_status(profile)
         return
+
     # Get the federated credentials from the user
-    cached_netid = load_last_netid(aws_file('config'), profile)
-    if cached_netid:
-        net_id_prompt = 'BYU Net ID [{}{}{}]: '.format(Colors.blue,cached_netid,Colors.normal)
-    else:
-        net_id_prompt = 'BYU Net ID: '
-    net_id = input(net_id_prompt) or cached_netid
-    if "@byu.local" in net_id:
-        print('{}@byu.local{} is not required'.format(Colors.lblue,Colors.normal))
-        username = net_id
-    else:
-        username = '{}@byu.local'.format(net_id)
+    net_id, username = _get_user_ids(profile)
     password = getpass.getpass()
     print('')
 
@@ -79,9 +68,7 @@ def cli(account, role, profile, status):
     ####
     # Obtain the roles available to assume
     ####
-    roles_page_url = action_url_on_validation_success(html_response)
     account_names, principal_roles, assertion, aws_session_duration = retrieve_roles_page(
-        roles_page_url,
         html_response,
         session,
         auth_signature,
@@ -91,117 +78,57 @@ def cli(account, role, profile, status):
     ####
     # Ask user which role to assume
     ####
-    account_roles = ask_which_role_to_assume(account_names, principal_roles, account, role)
+    account_roles_to_assume = ask_which_role_to_assume(account_names, principal_roles, account, role)
 
     ####
     # Assume roles and set in the environment
     ####
-    for account_role in account_roles:
-        aws_session_token = assume_role(account_role, assertion)
+    for account_role_to_assume in account_roles_to_assume:
+        aws_session_token = assume_role(account_role_to_assume, assertion)
 
         # If assuming roles across all accounts, then use the account name as the profile name
         if account == 'all':
-            profile = account_role.account_name
+            profile = account_role_to_assume.account_name
 
-        check_for_aws_dir()
-        write_to_cred_file(aws_file('creds'), aws_session_token, profile)
-        write_to_config_file(aws_file('config'), net_id, 'us-west-2', profile, account_role.role_name, account_role.account_name)
-    
-        if account_role.role_name == "AccountAdministrator":
-            print("Now logged into {}{}{}@{}{}{}".format(Colors.red,account_role.role_name, Colors.white, Colors.yellow,account_role.account_name,Colors.normal))
-        else:
-            print("Now logged into {}{}{}@{}{}{}".format(Colors.cyan,account_role.role_name, Colors.white, Colors.yellow,account_role.account_name,Colors.normal))
+        write_to_cred_file(profile, aws_session_token)
+        write_to_config_file(profile, net_id, 'us-west-2', account_role_to_assume.role_name, account_role_to_assume.account_name)
+        _print_status_message(account_role_to_assume)
 
 
-def aws_file(file_type):
-    if file_type == 'creds':
-        return "{}/.aws/credentials".format(expanduser('~'))
+def _print_status_message(assumed_role):
+    if assumed_role.role_name == "AccountAdministrator":
+        print("Now logged into {}{}{}@{}{}{}".format(Colors.red, assumed_role.role_name, Colors.white,
+                                                     Colors.yellow, assumed_role.account_name, Colors.normal))
     else:
-        return "{}/.aws/config".format(expanduser('~'))
+        print("Now logged into {}{}{}@{}{}{}".format(Colors.cyan, assumed_role.role_name, Colors.white,
+                                                     Colors.yellow, assumed_role.account_name, Colors.normal))
 
 
-def open_config_file(file):
-    config = configparser.ConfigParser()
-    config.read(file)
-    return config
-
-
-def check_for_aws_dir(directory="{}/.aws".format(expanduser('~'))):
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-
-
-def write_to_cred_file(file, aws_session_token, profile):
-    config = open_config_file(file)
-    config[profile] = {
-        'aws_access_key_id': aws_session_token['Credentials']['AccessKeyId'],
-        'aws_secret_access_key': aws_session_token['Credentials']['SecretAccessKey'],
-        'aws_session_token': aws_session_token['Credentials']['SessionToken']
-    }
-    with open(file, 'w') as configfile:
-        config.write(configfile)
-
-
-def write_to_config_file(file, net_id, region, profile, role, account):
-    one_hour = datetime.timedelta(hours=1)
-    expires = datetime.datetime.now() + one_hour
-    config = open_config_file(file)
-    config[profile] = {
-        'region': region,
-        'adfs_netid': net_id,
-        'adfs_role': f'{role}@{account}',
-        'adfs_expires': expires.strftime('%m-%d-%Y %H:%M')
-    }
-    with open(file, 'w') as configfile:
-        config.write(configfile)
-
-
-def load_last_netid(file, profile):
-    config = open_config_file(file)
-    if config.has_section(profile) and config.has_option(profile, 'adfs_netid'):
-        return config[profile]['adfs_netid']
+def _get_user_ids(profile):
+    # Ask for NetID, or use cached if user doesn't specify another
+    cached_netid = load_last_netid(profile)
+    if cached_netid:
+        net_id_prompt = 'BYU Net ID [{}{}{}]: '.format(Colors.blue,cached_netid,Colors.normal)
     else:
-        return ''
+        net_id_prompt = 'BYU Net ID: '
+    net_id = input(net_id_prompt) or cached_netid
 
-
-def get_status_message(config, profile):
-    if config.has_option(profile, 'adfs_role') and config.has_option(profile, 'adfs_expires'):
-        expires = check_expired(config[profile]['adfs_expires'])
-        account_name = f"{Colors.cyan}{config[profile]['adfs_role']}"
-        if expires == 'Expired':
-            expires_msg = f"{Colors.red}{expires} at: {config[profile]['adfs_expires']}"
-        else:
-            expires_msg = f"{Colors.yellow}{expires} at: {config[profile]['adfs_expires']}"
-        return f"{account_name} {Colors.white}- {expires_msg}"
+    # Append the ADFS-required "@byu.local" to the Net ID
+    if "@byu.local" in net_id:
+        print('{}@byu.local{} is not required'.format(Colors.lblue,Colors.normal))
+        username = net_id
     else:
-        return f"{Colors.red}Couldn't find status info"
+        username = '{}@byu.local'.format(net_id)
+
+    return net_id, username
 
 
-def get_status(file, profile='default'):
-    config = open_config_file(file)
-    if profile == 'all':
-        for x in config:
-            if x == 'DEFAULT':
-                continue
-            message = get_status_message(config, x)
-            print(f"{Colors.white}{x} - {message}")
-        return
-    else:
-        if config.has_section(profile):
-            message = get_status_message(config, profile)
-            print(message)
-        else:
-            print(f"{Colors.red}Couldn't find profile: {profile}")
-        return
-
-
-def check_expired(expires):
-    expires = datetime.datetime.strptime(expires, '%m-%d-%Y %H:%M')
-    if expires > datetime.datetime.now():
-        return 'Expires'
-    else:
-        return 'Expired'
+def _ensure_min_python_version():
+    if not sys.version.startswith('3.6'):
+        sys.stderr.write("{}byu_awslogin requires python 3.6{}\n".format(Colors.red, Colors.white))
+        sys.exit(-1)
 
 
 if __name__ == '__main__':
     cli()
+
