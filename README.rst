@@ -31,6 +31,12 @@ Installation
    `<https://www.python.org/downloads/>`_.
 -  Run ``pip3 install byu-awslogin``
 
+Upgrading
+---------
+If you already have byu-awslogin install and are looking to upgrade simply run
+
+``pip3 install --upgrade byu-awslogin``
+
 Usage
 -----
 
