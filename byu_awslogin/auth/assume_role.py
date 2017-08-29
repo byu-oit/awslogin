@@ -2,11 +2,10 @@ import boto3
 import botocore
 from botocore import client
 
-from .consoleeffects import Colors
+from ..util.consoleeffects import Colors
 
 
 class AccountRole:
-
     def __init__(self, account_name, role_name, role_arn, principal_arn):
         self.account_name = account_name
         self.role_name = role_name

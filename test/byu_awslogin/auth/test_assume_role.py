@@ -1,4 +1,5 @@
-from byu_awslogin.assume_role import ask_which_role_to_assume, assume_role
+from byu_awslogin.auth.assume_role import ask_which_role_to_assume
+
 
 def test_ask_which_role_to_assume_single_role():
     account_names = {

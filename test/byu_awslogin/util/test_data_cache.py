@@ -1,9 +1,10 @@
-from byu_awslogin import data_cache
-from unittest.mock import patch, MagicMock
-import tempfile
-import os
 import configparser
+import os
 import shutil
+import tempfile
+from unittest.mock import patch, MagicMock
+
+from byu_awslogin.util import data_cache
 
 tmp_aws_dir = "{}/.aws".format(tempfile.gettempdir())
 
@@ -21,8 +22,8 @@ def read_config_file(file):
     return config
 
 
-@patch('byu_awslogin.data_cache._aws_file')
-@patch('byu_awslogin.data_cache.os.path.exists')
+@patch('byu_awslogin.util.data_cache._aws_file')
+@patch('byu_awslogin.util.data_cache.os.path.exists')
 def test_write_to_cred_file(mock_exists, mock_aws_file):
     mock_exists.return_value = True
     creds_file = "{}/credentials".format(tmp_aws_dir)
@@ -42,8 +43,8 @@ def test_write_to_cred_file(mock_exists, mock_aws_file):
                                  }
 
 
-@patch('byu_awslogin.data_cache._aws_file')
-@patch('byu_awslogin.data_cache.os.path.exists')
+@patch('byu_awslogin.util.data_cache._aws_file')
+@patch('byu_awslogin.util.data_cache.os.path.exists')
 def test_write_to_config_file(mock_exists, mock_aws_file):
     mock_exists.return_value = True
     config_file = "{}/config".format(tmp_aws_dir)
@@ -66,7 +67,7 @@ def test_write_to_config_file(mock_exists, mock_aws_file):
     assert written_config.has_option('default', 'adfs_expires')
 
 
-@patch('byu_awslogin.data_cache._open_config_file')
+@patch('byu_awslogin.util.data_cache._open_config_file')
 def test_load_last_netid(mock_open_config_file):
     mock_config_file = mock_open_config_file.return_value = MagicMock()
     mock_config_file.has_section.return_value = True
@@ -82,7 +83,7 @@ def test_load_last_netid(mock_open_config_file):
     assert mock_config_file.__getitem__.call_count == 1
 
 
-@patch('byu_awslogin.data_cache._open_config_file')
+@patch('byu_awslogin.util.data_cache._open_config_file')
 def test_get_status(mock_open_config_file):
     mock_config_file = mock_open_config_file.return_value = MagicMock()
     d = {'default': {'adfs_role': 'fake_role', 'adfs_expires': '01-02-2017 15:03'}}

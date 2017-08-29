@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 
 
-import getpass
-import click
-import sys
+
 import platform
-from .consoleeffects import Colors
+import sys
+
+import click
+
+from .util.consoleeffects import Colors
 
 try:
     import lxml.etree as ET
@@ -16,12 +18,11 @@ except ImportError:
     else:
         raise
 
-from .adfs_auth import authenticate
-from .assume_role import ask_which_role_to_assume, assume_role
-from .roles import retrieve_roles_page
-from .data_cache import get_status, load_last_netid, write_to_config_file, write_to_cred_file
 
-__VERSION__ = '0.11.3'
+from .util.data_cache import get_status, load_cached_adfs_auth
+from .login import cached_login, non_cached_login
+
+__VERSION__ = '0.12.0'
 
 # Enable VT Mode on windows terminal code from:
 # https://bugs.python.org/issue29059
@@ -49,78 +50,13 @@ def cli(account, role, profile, status):
         get_status(profile)
         return
 
-    # Get the federated credentials from the user
-    net_id, username = _get_user_ids(profile)
-    password = getpass.getpass()
-    print('')
-
-    ####
-    # Authenticate against ADFS with DUO MFA
-    ####
-    html_response, session, auth_signature, duo_request_signature = authenticate(username, password)
-
-    # Overwrite and delete the credential variables, just for safety
-    username = '##############################################'
-    password = '##############################################'
-    del username
-    del password
-
-    ####
-    # Obtain the roles available to assume
-    ####
-    account_names, principal_roles, assertion, aws_session_duration = retrieve_roles_page(
-        html_response,
-        session,
-        auth_signature,
-        duo_request_signature,
-    )
-
-    ####
-    # Ask user which role to assume
-    ####
-    account_roles_to_assume = ask_which_role_to_assume(account_names, principal_roles, account, role)
-
-    ####
-    # Assume roles and set in the environment
-    ####
-    for account_role_to_assume in account_roles_to_assume:
-        aws_session_token = assume_role(account_role_to_assume, assertion)
-
-        # If assuming roles across all accounts, then use the account name as the profile name
-        if account == 'all':
-            profile = account_role_to_assume.account_name
-
-        write_to_cred_file(profile, aws_session_token)
-        write_to_config_file(profile, net_id, 'us-west-2', account_role_to_assume.role_name, account_role_to_assume.account_name)
-        _print_status_message(account_role_to_assume)
-
-
-def _print_status_message(assumed_role):
-    if assumed_role.role_name == "AccountAdministrator":
-        print("Now logged into {}{}{}@{}{}{}".format(Colors.red, assumed_role.role_name, Colors.white,
-                                                     Colors.yellow, assumed_role.account_name, Colors.normal))
+    # Use cached SAML assertion if already logged in, else login to ADFS
+    adfs_auth_result = load_cached_adfs_auth()
+    if adfs_auth_result:
+        cached_login(account, role, profile, adfs_auth_result)
+        pass
     else:
-        print("Now logged into {}{}{}@{}{}{}".format(Colors.cyan, assumed_role.role_name, Colors.white,
-                                                     Colors.yellow, assumed_role.account_name, Colors.normal))
-
-
-def _get_user_ids(profile):
-    # Ask for NetID, or use cached if user doesn't specify another
-    cached_netid = load_last_netid(profile)
-    if cached_netid:
-        net_id_prompt = 'BYU Net ID [{}{}{}]: '.format(Colors.blue,cached_netid,Colors.normal)
-    else:
-        net_id_prompt = 'BYU Net ID: '
-    net_id = input(net_id_prompt) or cached_netid
-
-    # Append the ADFS-required "@byu.local" to the Net ID
-    if "@byu.local" in net_id:
-        print('{}@byu.local{} is not required'.format(Colors.lblue,Colors.normal))
-        username = net_id
-    else:
-        username = '{}@byu.local'.format(net_id)
-
-    return net_id, username
+        non_cached_login(account, role, profile)
 
 
 def _ensure_min_python_version():

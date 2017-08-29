@@ -1,9 +1,11 @@
-from byu_awslogin.adfs_auth import authenticate
-from unittest.mock import patch, MagicMock
-import os
 import json
+import os
+from unittest.mock import patch, MagicMock
 
-@patch('byu_awslogin.adfs_auth.requests')
+from byu_awslogin.auth.adfs_auth import authenticate
+
+
+@patch('byu_awslogin.auth.adfs_auth.requests')
 def test_authenticate(mock_requests):
     mock_session = mock_requests.Session.return_value = MagicMock()    
     
@@ -38,6 +40,5 @@ def test_authenticate(mock_requests):
     duo_auth_result_mock.json.return_value = json.loads(duo_auth_result_json)
     
     mock_session.post.side_effect = [duo_screen_mock, duo_init_mock, duo_auth_trans_init_mock, duo_verify_code_mock, duo_auth_result_mock]
-    login_response_html_soup, session, auth_signature, duo_request_signature = authenticate('FakeUsername', 'FakePassword')
-    assert auth_signature == 'REDACTED'
-    assert duo_request_signature == 'TX|REDACTED:APP|REDACTED'
+    adfs_auth_result = authenticate('FakeUsername', 'FakePassword')
+    assert adfs_auth_result.signed_response == 'REDACTED:APP|REDACTED'
