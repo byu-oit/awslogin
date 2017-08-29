@@ -9,7 +9,7 @@ from .consoleeffects import Colors
 
 
 def load_cached_adfs_auth():
-    file = _aws_file('config')
+    file = _aws_file('credentials')
     config = _open_config_file(file)
     section = 'all'
     if config.has_section(section) and config.has_option(section, 'adfs_auth'):
@@ -21,7 +21,7 @@ def load_cached_adfs_auth():
 
 def cache_adfs_auth(adfs_auth_result):
     _create_aws_dir_if_not_exists()
-    file = _aws_file('config')
+    file = _aws_file('credentials')
     config = _open_config_file(file)
     pickled = codecs.encode(pickle.dumps(adfs_auth_result), "base64").decode()
     config['all'] = {
