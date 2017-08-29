@@ -46,7 +46,7 @@ def get_status(profile='default'):
             message = _get_status_message(config, profile)
             print(message)
         else:
-            print(f"{Colors.red}Couldn't find profile: {profile}")
+            print(f"{Colors.red}Couldn't find profile: {profile}{Colors.normal}")
         return
 
 
@@ -112,9 +112,9 @@ def _get_status_message(config, profile):
             expires_msg = f"{Colors.red}{expires} at: {config[profile]['adfs_expires']}"
         else:
             expires_msg = f"{Colors.yellow}{expires} at: {config[profile]['adfs_expires']}"
-        return f"{account_name} {Colors.white}- {expires_msg}"
+        return f"{account_name} {Colors.white}- {expires_msg}{Colors.normal}"
     else:
-        return f"{Colors.red}Couldn't find status info"
+        return f"{Colors.red}Couldn't find status info{Colors.normal}"
 
 
 def _check_expired(expires):
