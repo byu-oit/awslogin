@@ -48,8 +48,14 @@ awslogin.***
 Once you're logged in, you can execute commands using the AWS CLI or 
 AWS SDK. Try running ``aws s3 ls``.
 
-Currently, awslogin tokens are only valid for 8 or 9 hours. To switch accounts
-just run awslogin again.
+Currently, AWS temporary credentials are only valid for 1 hour. We cache your
+ADFS session, however, so you can just re-run ``awslogin`` again to get a
+new set of AWS credentials without logging in again to ADFS. Your ADFS login 
+session is valid for 8 hours, after which time you'll be required to login 
+to ADFS again to obtain a new session.
+
+To switch accounts after you've already authenticated to an account, just
+run awslogin again and select a new account/role combination.
 
 To use it:
 
