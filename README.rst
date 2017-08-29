@@ -11,7 +11,7 @@ BYU used to use the great
 `aws-adfs <https://github.com/venth/aws-adfs>`_ CLI tool to login to
 our AWS accounts. It worked great, especially the DUO 2FA support.
 Eventually, we decided to write our own similar tool but make it
-BYU-specific so that we could taylor it to our needs (which basically
+BYU-specific so that we could tailor it to our needs (which basically
 means hard-code certain BYU-specific things) and remove some of the
 required parameters. Since this tool will be used by BYU employees only
 we had that option. We then morphed it a little more for our use cases.
@@ -20,7 +20,7 @@ This isn't something that you could use outside of BYU, sorry.
 Installation
 ------------
 
--  Install Python 3.x using your preferred method. See the `installation
+-  Install Python 3.6 using your preferred method. See the `installation
    options <https://github.com/byu-oit/awslogin/blob/master/INSTALLATION_OPTIONS.md>`_ page for step by step
    instructions for installing in various environments.
 -  See `<https://www.python.org/downloads/>`_ for a windows installation
@@ -42,8 +42,8 @@ awslogin.***
 Once you're logged in, you can execute commands using the AWS CLI or 
 AWS SDK. Try running ``aws s3 ls``.
 
-Currently, awslogin tokens are only valid for 1 hour due to the 
-assume\_role\_with\_saml AWS API call has a max timeout of 1 hour.
+Currently, awslogin tokens are only valid for 8 or 9 hours. To switch accounts
+just run awslogin again.
 
 To use it:
 
@@ -80,7 +80,5 @@ Deploying changes
 TODO
 ----
 
--  Authenticate once for 8 hours and rerun ``awslogin`` to relogin
 -  Write tests
-   -  roles.py
-   -  assume\_role.py
+    - Write more tests to increase overall coverage
