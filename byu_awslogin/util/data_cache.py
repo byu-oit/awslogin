@@ -1,8 +1,34 @@
+import codecs
 import configparser
-import os
-from os.path import expanduser
 import datetime
+import os
+import pickle
+from os.path import expanduser
+
 from .consoleeffects import Colors
+
+
+def load_cached_adfs_auth():
+    file = _aws_file('credentials')
+    config = _open_config_file(file)
+    section = 'all'
+    if config.has_section(section) and config.has_option(section, 'adfs_auth'):
+        unpickled = pickle.loads(codecs.decode(config[section]['adfs_auth'].encode(), "base64"))
+        return unpickled
+    else:
+        return None
+
+
+def cache_adfs_auth(adfs_auth_result):
+    _create_aws_dir_if_not_exists()
+    file = _aws_file('credentials')
+    config = _open_config_file(file)
+    pickled = codecs.encode(pickle.dumps(adfs_auth_result), "base64").decode()
+    config['all'] = {
+        'adfs_auth': pickled
+    }
+    with open(file, 'w') as configfile:
+        config.write(configfile)
 
 
 def get_status(profile='default'):
@@ -20,7 +46,7 @@ def get_status(profile='default'):
             message = _get_status_message(config, profile)
             print(message)
         else:
-            print(f"{Colors.red}Couldn't find profile: {profile}")
+            print(f"{Colors.red}Couldn't find profile: {profile}{Colors.normal}")
         return
 
 
@@ -41,10 +67,11 @@ def write_to_config_file(profile, net_id, region, role, account):
     config = _open_config_file(file)
     config[profile] = {
         'region': region,
-        'adfs_netid': net_id,
         'adfs_role': f'{role}@{account}',
         'adfs_expires': expires.strftime('%m-%d-%Y %H:%M')
     }
+    if net_id:
+        config[profile]['adfs_netid'] = net_id
     with open(file, 'w') as configfile:
         config.write(configfile)
 
@@ -85,9 +112,9 @@ def _get_status_message(config, profile):
             expires_msg = f"{Colors.red}{expires} at: {config[profile]['adfs_expires']}"
         else:
             expires_msg = f"{Colors.yellow}{expires} at: {config[profile]['adfs_expires']}"
-        return f"{account_name} {Colors.white}- {expires_msg}"
+        return f"{account_name} {Colors.white}- {expires_msg}{Colors.normal}"
     else:
-        return f"{Colors.red}Couldn't find status info"
+        return f"{Colors.red}Couldn't find status info{Colors.normal}"
 
 
 def _check_expired(expires):

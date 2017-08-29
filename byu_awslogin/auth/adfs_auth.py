@@ -2,19 +2,28 @@
 # This file was adapted from https://github.com/venth/aws-adfs. Thanks to https://github.com/venth for his work on
 # figuring this out
 #
-import sys
 import os
 import re
+import sys
 from urllib.parse import urlparse, parse_qs
 
 import lxml.etree as ET
 import requests
 from bs4 import BeautifulSoup
 
-from .consoleeffects import Colors
+from ..util.consoleeffects import Colors
 
 # idpentryurl: The initial url that starts the authentication process.
 adfs_entry_url = 'https://awslogin.byu.edu:443/adfs/ls/IdpInitiatedSignOn.aspx?loginToRp=urn:amazon:webservices'
+
+
+class AdfsAuthResult:
+    def __init__(self, action_url, context, signed_response, session):
+        self.action_url = action_url
+        self.context = context
+        self.signed_response = signed_response
+        self.session = session
+
 
 def authenticate(username, password):
     # Initiate session handler
@@ -42,8 +51,11 @@ def authenticate(username, password):
 
     # Perform DUO MFA
     auth_signature, duo_request_signature = _authenticate_duo(login_response_html_soup, True, session)
+    signed_response = _get_signed_response(auth_signature, duo_request_signature)
+    context = _context(login_response_html_soup)
+    action_url = _action_url_on_validation_success(login_response_html_soup)
 
-    return login_response_html_soup, session, auth_signature, duo_request_signature
+    return AdfsAuthResult(action_url, context, signed_response, session)
 
 _headers = {
     'Accept-Language': 'en',
@@ -51,6 +63,24 @@ _headers = {
     'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
     'Accept': 'text/plain, */*; q=0.01',
 }
+
+def _action_url_on_validation_success(login_response_html_soup):
+    options_form = login_response_html_soup.find('form', id='options')
+    return options_form['action']
+
+def _get_signed_response(auth_signature, duo_request_signature):
+    return '{}:{}'.format(auth_signature, _app(duo_request_signature))
+
+
+def _app(request_signature):
+    app_pattern = re.compile(".*(APP\|[^:]+)")
+    m = app_pattern.search(request_signature)
+    return m.group(1)
+
+def _context(login_response_html_soup):
+    context_input = login_response_html_soup.find('input', id='context')
+    return context_input['value']
+
 
 def _get_auth_payload(login_html_soup, username, password):
     auth_payload = {}
