@@ -1,4 +1,4 @@
-import codecs
+import base64
 import configparser
 import datetime
 import os
@@ -13,7 +13,7 @@ def load_cached_adfs_auth():
     config = _open_config_file(file)
     section = 'all'
     if config.has_section(section) and config.has_option(section, 'adfs_auth'):
-        unpickled = pickle.loads(codecs.decode(config[section]['adfs_auth'].encode(), "base64"))
+        unpickled = pickle.loads(base64.urlsafe_b64decode(config[section]['adfs_auth'].encode()))
         return unpickled
     else:
         return None
@@ -23,7 +23,7 @@ def cache_adfs_auth(adfs_auth_result):
     _create_aws_dir_if_not_exists()
     file = _aws_file('credentials')
     config = _open_config_file(file)
-    pickled = codecs.encode(pickle.dumps(adfs_auth_result), "base64").decode()
+    pickled = base64.urlsafe_b64encode(pickle.dumps(adfs_auth_result)).decode()
     config['all'] = {
         'adfs_auth': pickled
     }
