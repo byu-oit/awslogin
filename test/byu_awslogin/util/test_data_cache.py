@@ -24,6 +24,18 @@ def read_config_file(file):
 
 @patch('byu_awslogin.util.data_cache._aws_file')
 @patch('byu_awslogin.util.data_cache.os.path.exists')
+def test_cache_adfs_auth(mock_exists, mock_aws_file):
+    mock_exists.return_value = True
+    creds_file = "{}/credentials".format(tmp_aws_dir)
+    mock_aws_file.return_value = creds_file
+
+    test_adfs_auth_val = b"testing\ntesting"
+    data_cache.cache_adfs_auth(test_adfs_auth_val)
+
+    assert test_adfs_auth_val == data_cache.load_cached_adfs_auth()
+
+@patch('byu_awslogin.util.data_cache._aws_file')
+@patch('byu_awslogin.util.data_cache.os.path.exists')
 def test_write_to_cred_file(mock_exists, mock_aws_file):
     mock_exists.return_value = True
     creds_file = "{}/credentials".format(tmp_aws_dir)
