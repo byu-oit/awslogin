@@ -65,7 +65,7 @@ def write_to_config_file(profile, net_id, region, role, account):
     one_hour = datetime.timedelta(hours=1)
     expires = datetime.datetime.now() + one_hour
     config = _open_config_file(file)
-    if not net_id and config[profile].get('adfs_netid'):
+    if not net_id and config.get(profile, 'adfs_netid', fallback=None):
         net_id = config[profile]['adfs_netid']
     config[profile] = {
         'region': region,
