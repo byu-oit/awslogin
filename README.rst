@@ -66,6 +66,7 @@ To use it:
    arguments as well.
 -  Run ``awslogin --profile <profile name>`` to specifiy an alternative
    profile
+-  Run ``awslogin --region <region name>`` to specify a different region. The default region is *us-west-2*.
 -  Run ``awslogin --status`` for the current status of the default profile
 -  Run ``awslogin --status --profile dev`` for the current status of the
    dev profile
