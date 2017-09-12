@@ -22,7 +22,7 @@ except ImportError:
 from .util.data_cache import get_status, load_cached_adfs_auth
 from .login import cached_login, non_cached_login
 
-__VERSION__ = '0.12.3'
+__VERSION__ = '0.12.4'
 
 # Enable VT Mode on windows terminal code from:
 # https://bugs.python.org/issue29059
@@ -41,8 +41,9 @@ if platform.system().lower() == 'windows':
 @click.option('-a', '--account', help='Account to login with')
 @click.option('-r', '--role', help='Role to use after login')
 @click.option('-p', '--profile', default='default', help='Profile to use store credentials. Defaults to default')
+@click.option('--region', default='us-west-2', help="The AWS region you will be hitting")
 @click.option('-s', '--status', is_flag=True, default=False, help='Display current logged in status. Use profile all to see all statuses')
-def cli(account, role, profile, status):
+def cli(account, role, profile, region, status):
     _ensure_min_python_version()
 
     # Display status and exit if the user specified the "-s" flag
@@ -53,10 +54,10 @@ def cli(account, role, profile, status):
     # Use cached SAML assertion if already logged in, else login to ADFS
     adfs_auth_result = load_cached_adfs_auth()
     if adfs_auth_result:
-        cached_login(account, role, profile, adfs_auth_result)
+        cached_login(account, role, profile, region, adfs_auth_result)
         pass
     else:
-        non_cached_login(account, role, profile)
+        non_cached_login(account, role, profile, region)
 
 
 def _ensure_min_python_version():

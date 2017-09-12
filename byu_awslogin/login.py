@@ -8,16 +8,16 @@ from .util.consoleeffects import Colors
 from .util.data_cache import load_last_netid, write_to_config_file, write_to_cred_file, cache_adfs_auth
 
 
-def cached_login(account, role, profile, adfs_auth_result):
+def cached_login(account, role, profile, region, adfs_auth_result):
     saml_assertion = get_saml_assertion(adfs_auth_result)
 
     if not saml_assertion: # Not logged in anymore, so need to re-login
-        non_cached_login(account, role, profile)
+        non_cached_login(account, role, profile, region)
     else: # Still logged in and got a SAML assertion properly
-        _perform_login(adfs_auth_result, saml_assertion, account, role, profile, None)
+        _perform_login(adfs_auth_result, saml_assertion, account, role, profile, None, region)
 
 
-def non_cached_login(account, role, profile):
+def non_cached_login(account, role, profile, region):
     # Get the federated credentials from the user
     net_id, username = _get_user_ids(profile)
     password = getpass.getpass()
@@ -35,10 +35,10 @@ def non_cached_login(account, role, profile):
     del password
 
     saml_assertion = get_saml_assertion(adfs_auth_result)
-    _perform_login(adfs_auth_result, saml_assertion, account, role, profile, net_id)
+    _perform_login(adfs_auth_result, saml_assertion, account, role, profile, net_id, region)
 
 
-def _perform_login(adfs_auth_result, saml_assertion, account, role, profile, net_id):
+def _perform_login(adfs_auth_result, saml_assertion, account, role, profile, net_id, region):
     account_roles_to_assume = _prompt_for_roles_to_assume(saml_assertion, account, role)
 
     # Assume all requested roles and set in the environment
@@ -50,7 +50,7 @@ def _perform_login(adfs_auth_result, saml_assertion, account, role, profile, net
             profile = account_role_to_assume.account_name
 
         write_to_cred_file(profile, aws_session_token)
-        write_to_config_file(profile, net_id, 'us-west-2', account_role_to_assume.role_name,
+        write_to_config_file(profile, net_id, region, account_role_to_assume.role_name,
                              account_role_to_assume.account_name)
         _print_status_message(account_role_to_assume)
 

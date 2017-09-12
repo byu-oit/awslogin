@@ -21,7 +21,7 @@ def test_cached_login(mock_cache_adfs_auth, mock_write_to_config_file,
     ]
     mock_assume_role.return_value = "FakeSessionToken"
 
-    cached_login("FakeAccount", None, "default", {})
+    cached_login("FakeAccount", None, "default", {}, 'us-west-2')
 
     assert mock_get_saml_assertion.call_count == 1
     assert mock_prompt_roles.call_count == 1
@@ -54,7 +54,7 @@ def test_non_cached_login(mock_cache_adfs_auth, mock_write_to_config_file,
     ]
     mock_assume_role.return_value = "FakeSessionToken"
 
-    non_cached_login("FakeAccount", None, "default")
+    non_cached_login("FakeAccount", None, "default", 'us-west-2')
 
     assert mock_get_user_ids.call_count == 1
     assert mock_get_password.call_count == 1
