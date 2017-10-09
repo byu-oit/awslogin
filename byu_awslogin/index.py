@@ -19,10 +19,10 @@ except ImportError:
         raise
 
 
-from .util.data_cache import get_status, load_cached_adfs_auth
+from .util.data_cache import get_status, load_cached_adfs_auth, remove_cached_adfs_auth
 from .login import cached_login, non_cached_login
 
-__VERSION__ = '0.12.4'
+__VERSION__ = '0.12.5'
 
 # Enable VT Mode on windows terminal code from:
 # https://bugs.python.org/issue29059
@@ -43,12 +43,18 @@ if platform.system().lower() == 'windows':
 @click.option('-p', '--profile', default='default', help='Profile to use store credentials. Defaults to default')
 @click.option('--region', default='us-west-2', help="The AWS region you will be hitting")
 @click.option('-s', '--status', is_flag=True, default=False, help='Display current logged in status. Use profile all to see all statuses')
-def cli(account, role, profile, region, status):
+@click.option('--logout', is_flag=True, default=False, help='Logout of ADFS cached session only. Does not log out of any active profiles.')
+def cli(account, role, profile, region, status, logout):
     _ensure_min_python_version()
 
     # Display status and exit if the user specified the "-s" flag
     if status:
         get_status(profile)
+        return
+
+    if logout:
+        remove_cached_adfs_auth()
+        print("{}Terminated ADFS Session{}".format(Colors.yellow, Colors.normal))
         return
 
     # Use cached SAML assertion if already logged in, else login to ADFS
