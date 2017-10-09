@@ -54,7 +54,6 @@ def test_remove_cached_adfs_auth(mock_exists, mock_aws_file):
     assert not written_config.has_option('all', 'adfs_auth')
 
 
-
 @patch('byu_awslogin.util.data_cache._aws_file')
 @patch('byu_awslogin.util.data_cache.os.path.exists')
 def test_write_to_cred_file(mock_exists, mock_aws_file):
@@ -71,9 +70,9 @@ def test_write_to_cred_file(mock_exists, mock_aws_file):
     assert mock_exists.call_count == 1
     assert mock_aws_file.call_count == 1
     assert written_config['default'] == {'aws_access_key_id': 'keyid',
-                                 'aws_secret_access_key': 'secretkey',
-                                 'aws_session_token': 'sessiontoken'
-                                 }
+                                         'aws_secret_access_key': 'secretkey',
+                                         'aws_session_token': 'sessiontoken'
+                                         }
 
 
 @patch('byu_awslogin.util.data_cache._aws_file')
@@ -105,7 +104,7 @@ def test_load_last_netid(mock_open_config_file):
     mock_config_file = mock_open_config_file.return_value = MagicMock()
     mock_config_file.has_section.return_value = True
     mock_config_file.has_option.return_value = True
-    d = { 'default' : {'adfs_netid': 'fake_netid'}}
+    d = {'default': {'adfs_netid': 'fake_netid'}}
     mock_config_file.__getitem__.side_effect = d.__getitem__
 
     profile = "default"
