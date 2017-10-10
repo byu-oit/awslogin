@@ -19,6 +19,16 @@ def load_cached_adfs_auth():
         return None
 
 
+def remove_cached_adfs_auth():
+    file = _aws_file('credentials')
+    config = _open_config_file(file)
+    section = 'all'
+    if config.has_section(section) and config.has_option(section, 'adfs_auth'):
+        config.remove_option(section, 'adfs_auth')
+        with open(file, 'w') as configfile:
+            config.write(configfile)
+
+
 def cache_adfs_auth(adfs_auth_result):
     _create_aws_dir_if_not_exists()
     file = _aws_file('credentials')
