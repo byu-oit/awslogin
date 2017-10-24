@@ -79,7 +79,7 @@ def write_to_config_file(profile, net_id, region, role, account):
         net_id = config[profile]['adfs_netid']
     config[profile] = {
         'region': region,
-        'adfs_role': f'{role}@{account}',
+        'adfs_role': "{}@{}".format(role, account),
         'adfs_expires': expires.strftime('%m-%d-%Y %H:%M')
     }
     if net_id:
