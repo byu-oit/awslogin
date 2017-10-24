@@ -49,14 +49,14 @@ def get_status(profile='default'):
             if x == 'DEFAULT':
                 continue
             message = _get_status_message(config, x)
-            print(f"{Colors.white}{x} - {message}")
+            print("{}{} - {}".format(Colors.white, x, message))
         return
     else:
         if config.has_section(profile):
             message = _get_status_message(config, profile)
             print(message)
         else:
-            print(f"{Colors.red}Couldn't find profile: {profile}{Colors.normal}")
+            print("{}Couldn't find profile: {}{}".format(Colors.red, profile, Colors.normal))
         return
 
 
@@ -119,14 +119,14 @@ def _open_config_file(file):
 def _get_status_message(config, profile):
     if config.has_option(profile, 'adfs_role') and config.has_option(profile, 'adfs_expires'):
         expires = _check_expired(config[profile]['adfs_expires'])
-        account_name = f"{Colors.cyan}{config[profile]['adfs_role']}"
+        account_name = "{}{}".format(Colors.cyan, config[profile]['adfs_role'])
         if expires == 'Expired':
-            expires_msg = f"{Colors.red}{expires} at: {config[profile]['adfs_expires']}"
+            expires_msg = "{}{} at: {}".format(Colors.red, expires, config[profile]['adfs_expires'])
         else:
-            expires_msg = f"{Colors.yellow}{expires} at: {config[profile]['adfs_expires']}"
-        return f"{account_name} {Colors.white}- {expires_msg}{Colors.normal}"
+            expires_msg = "{}{} at: {}".format(Colors.yellow, expires, config[profile]['adfs_expires'])
+        return "{} {}- {}{}".format(account_name, Colors.white, expires_msg, Colors.normal)
     else:
-        return f"{Colors.red}Couldn't find status info{Colors.normal}"
+        return "{}Couldn't find status info{}".format(Colors.red, Colors.normal)
 
 
 def _check_expired(expires):
