@@ -67,8 +67,8 @@ def cli(account, role, profile, region, status, logout):
 
 
 def _ensure_min_python_version():
-    if not sys.version.startswith('3.6'):
-        sys.stderr.write("{}byu_awslogin requires python 3.6{}\n".format(Colors.red, Colors.white))
+    if not sys.version.startswith('3'):
+        sys.stderr.write("{}byu_awslogin requires python 3.x{}\n".format(Colors.red, Colors.white))
         sys.exit(-1)
 
 
