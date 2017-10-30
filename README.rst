@@ -29,13 +29,13 @@ Installation
    `<https://www.python.org/downloads/>`_.
 -  In Mac you can use homebrew, macports or
    `<https://www.python.org/downloads/>`_.
--  Run ``pip3 install byu-awslogin``
+-  Run ``pip3 install byu_awslogin``
 
 Upgrading
 ---------
-If you already have byu-awslogin install and are looking to upgrade simply run
+If you already have byu_awslogin install and are looking to upgrade simply run
 
-``pip3 install --upgrade byu-awslogin``
+``pip3 install --upgrade byu_awslogin``
 
 Usage
 -----
