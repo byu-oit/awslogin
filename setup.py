@@ -1,7 +1,4 @@
 #!/usr/bin/env python
-import os
-import sys
-import subprocess
 from setuptools import setup, find_packages
 from byu_awslogin import index
 
@@ -9,10 +6,12 @@ from byu_awslogin import index
 with open("README.rst") as rm_file:
     long_description = rm_file.read()
 
+
 def get_requirements():
     with open('requirements.txt') as obj:
         lines = [dep for dep in obj.read().split('\n') if dep]
         return lines
+
 
 VERSION = index.__VERSION__
 
@@ -44,4 +43,4 @@ setup(name='byu_awslogin',
           'Natural Language :: English',
           'Topic :: Utilities'
       ]
-)
+      )
