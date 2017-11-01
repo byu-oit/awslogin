@@ -39,7 +39,8 @@ setup(name='byu_awslogin',
           'Operating System :: MacOS :: MacOS X',
           'Operating System :: Microsoft :: Windows',
           'Operating System :: POSIX',
-          'Programming Language :: Python :: 3 :: Only',
+          'Programming Language :: Python :: 3',
+          'Programming Language :: Python :: 2.7',
           'Natural Language :: English',
           'Topic :: Utilities'
       ]
