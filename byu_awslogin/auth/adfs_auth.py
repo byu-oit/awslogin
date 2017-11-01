@@ -202,7 +202,7 @@ def _authentication_result(
 
     if json_response['response']['status_code'] != 'allow':
         if json_response['response']['reason'] == 'User mistake' and json_response['response']['status'] == 'Login request denied.':
-            print('{}Duo Auth Denied'.format(Colors.red))
+            print('{}Duo Auth Denied{}'.format(Colors.red, Colors.normal))
             sys.exit(1)
         raise RuntimeError(
             u'There was an issue during retrieval of a code entered into the device.'
