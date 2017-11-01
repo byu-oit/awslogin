@@ -15,3 +15,4 @@ lxml
 awscli
 click
 configparser
+future

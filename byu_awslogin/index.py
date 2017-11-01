@@ -51,8 +51,6 @@ if platform.system().lower() == 'windows':
 @click.option('-s', '--status', is_flag=True, default=False, help='Display current logged in status. Use profile all to see all statuses')
 @click.option('--logout', is_flag=True, default=False, help='Logout of ADFS cached session only. Does not log out of any active profiles.')
 def cli(account, role, profile, region, status, logout):
-    _ensure_min_python_version()
-
     # Display status and exit if the user specified the "-s" flag
     if status:
         get_status(profile)
@@ -72,12 +70,5 @@ def cli(account, role, profile, region, status, logout):
         non_cached_login(account, role, profile, region)
 
 
-def _ensure_min_python_version():
-    if not sys.version.startswith('3'):
-        sys.stderr.write("{}byu_awslogin requires python 3.x{}\n".format(Colors.red, Colors.white))
-        sys.exit(-1)
-
-
 if __name__ == '__main__':
     cli()
-
