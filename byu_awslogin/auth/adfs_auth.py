@@ -12,7 +12,10 @@ standard_library.install_aliases()
 import os
 import re
 import sys
-from urllib.parse import urlparse, parse_qs
+try:
+    from urllib.parse import urlparse, parse_qs
+except ImportError:
+    from urlparse import urlparse, parse_qs
 
 import lxml.etree as ET
 import requests

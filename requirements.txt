@@ -14,3 +14,4 @@ urllib3==1.21.1
 lxml
 awscli
 click
+configparser
