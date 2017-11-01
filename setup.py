@@ -1,22 +1,17 @@
-#!/usr/bin/env python3
-
-import os
-import sys
-import subprocess
+#!/usr/bin/env python
 from setuptools import setup, find_packages
 from byu_awslogin import index
 
-if not sys.version.startswith('3.6'):
-    sys.stderr.write("byu_awslogin requires python 3.6\n")
-    sys.exit(-1)
 
 with open("README.rst") as rm_file:
     long_description = rm_file.read()
+
 
 def get_requirements():
     with open('requirements.txt') as obj:
         lines = [dep for dep in obj.read().split('\n') if dep]
         return lines
+
 
 VERSION = index.__VERSION__
 
@@ -44,8 +39,9 @@ setup(name='byu_awslogin',
           'Operating System :: MacOS :: MacOS X',
           'Operating System :: Microsoft :: Windows',
           'Operating System :: POSIX',
-          'Programming Language :: Python :: 3 :: Only',
+          'Programming Language :: Python :: 3',
+          'Programming Language :: Python :: 2.7',
           'Natural Language :: English',
           'Topic :: Utilities'
       ]
-)
+      )

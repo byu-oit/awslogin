@@ -1,11 +1,21 @@
+from __future__ import print_function
+from __future__ import unicode_literals
+from __future__ import division
+from __future__ import absolute_import
 #
 # This file was adapted from https://github.com/venth/aws-adfs. Thanks to https://github.com/venth for his work on
 # figuring this out
 #
+from builtins import object
+from future import standard_library
+standard_library.install_aliases()
 import os
 import re
 import sys
-from urllib.parse import urlparse, parse_qs
+try:
+    from urllib.parse import urlparse, parse_qs
+except ImportError:
+    from urlparse import urlparse, parse_qs
 
 import lxml.etree as ET
 import requests
@@ -17,7 +27,7 @@ from ..util.consoleeffects import Colors
 adfs_entry_url = 'https://awslogin.byu.edu:443/adfs/ls/IdpInitiatedSignOn.aspx?loginToRp=urn:amazon:webservices'
 
 
-class AdfsAuthResult:
+class AdfsAuthResult(object):
     def __init__(self, action_url, context, signed_response, session):
         self.action_url = action_url
         self.context = context
@@ -192,7 +202,7 @@ def _authentication_result(
 
     if json_response['response']['status_code'] != 'allow':
         if json_response['response']['reason'] == 'User mistake' and json_response['response']['status'] == 'Login request denied.':
-            print('{}Duo Auth Denied'.format(Colors.red))
+            print('{}Duo Auth Denied{}'.format(Colors.red, Colors.normal))
             sys.exit(1)
         raise RuntimeError(
             u'There was an issue during retrieval of a code entered into the device.'

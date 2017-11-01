@@ -20,7 +20,7 @@ This isn't something that you could use outside of BYU, sorry.
 Installation
 ------------
 
--  Install Python 3.6 using your preferred method. See the `installation
+-  Python 3.6 is recommended but it should work with Python 2.7. See the `installation
    options <https://github.com/byu-oit/awslogin/blob/master/INSTALLATION_OPTIONS.md>`_ page for step by step
    instructions for installing in various environments.
 -  See `<https://www.python.org/downloads/>`_ for a windows installation
@@ -29,13 +29,13 @@ Installation
    `<https://www.python.org/downloads/>`_.
 -  In Mac you can use homebrew, macports or
    `<https://www.python.org/downloads/>`_.
--  Run ``pip3 install byu_awslogin``
+-  Run ``pip3 install byu_awslogin`` or ``pip install byu_awslogin`` as appropriate for your python installation
 
 Upgrading
 ---------
 If you already have byu_awslogin install and are looking to upgrade simply run
 
-``pip3 install --upgrade byu_awslogin``
+``pip3 install --upgrade byu_awslogin`` or ``pip install --upgrade byu_awslogin`` as appropriate for your python installation
 
 Usage
 -----
@@ -72,6 +72,7 @@ To use it:
    dev profile
 -  Run ``awslogin --status --profile all`` for the current status of the
    all profiles
+-  Run ``awslogin --logout`` to logout of a cached ADFS session
 -  Run ``awslogin --version`` to display the running version of awslogin
 -  Run ``awslogin --help`` for full help message
 

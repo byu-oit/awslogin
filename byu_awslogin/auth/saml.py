@@ -1,3 +1,11 @@
+from __future__ import print_function
+from __future__ import unicode_literals
+from __future__ import division
+from __future__ import absolute_import
+from builtins import int
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
 import base64
 from bs4 import BeautifulSoup
 import lxml.etree as ET
@@ -6,7 +14,7 @@ import requests
 default_session_duration = 3600
 
 
-class SAMLAssertion:
+class SAMLAssertion(object):
     def __init__(self, assertion):
         self.assertion = assertion
 
