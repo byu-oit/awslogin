@@ -1,3 +1,14 @@
+from __future__ import print_function
+from __future__ import unicode_literals
+from __future__ import division
+from __future__ import absolute_import
+from builtins import range
+from builtins import input
+from builtins import int
+from builtins import str
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
 import boto3
 import botocore
 from botocore import client
@@ -5,7 +16,7 @@ from botocore import client
 from ..util.consoleeffects import Colors
 
 
-class AccountRole:
+class AccountRole(object):
     def __init__(self, account_name, role_name, role_arn, principal_arn):
         self.account_name = account_name
         self.role_name = role_name

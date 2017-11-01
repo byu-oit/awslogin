@@ -1,7 +1,14 @@
+from __future__ import print_function
+from __future__ import unicode_literals
+from __future__ import division
+from __future__ import absolute_import
 #
 # This file was adapted from https://github.com/venth/aws-adfs. Thanks to https://github.com/venth for his work on
 # figuring this out
 #
+from builtins import object
+from future import standard_library
+standard_library.install_aliases()
 import os
 import re
 import sys
@@ -17,7 +24,7 @@ from ..util.consoleeffects import Colors
 adfs_entry_url = 'https://awslogin.byu.edu:443/adfs/ls/IdpInitiatedSignOn.aspx?loginToRp=urn:amazon:webservices'
 
 
-class AdfsAuthResult:
+class AdfsAuthResult(object):
     def __init__(self, action_url, context, signed_response, session):
         self.action_url = action_url
         self.context = context
