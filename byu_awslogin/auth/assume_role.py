@@ -49,7 +49,7 @@ def assume_role(account_role, samlAssertion):
 
 def __get_all_account_roles(roles_by_account, role_name):
     if not role_name:
-        print("{}You must speicify a role using the {}--role{} option when assuming a role accross all accounts{}".format(Colors.lred,Colors.red,Colors.lred,Colors.normal))
+        print("{}You must specify a role using the {}--role{} option when assuming a role accross all accounts{}".format(Colors.lred,Colors.red,Colors.lred,Colors.normal))
         exit(1)
     account_roles = []
     for account_name in roles_by_account:
