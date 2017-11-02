@@ -5,7 +5,7 @@
 * `apt-get install python-dev`
 * `wget https://bootstrap.pypa.io/get-pip.py`
 * `python get-pip.py`
-* ` install byu_awslogin`
+* `pip install byu_awslogin`
 * `awslogin`
 
 ## node:latest docker image or any debian wheezy installation with adding Python3
