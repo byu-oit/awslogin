@@ -32,7 +32,7 @@ def ask_which_role_to_assume(account_names, principal_roles, account_name=None, 
         return __get_all_account_roles(roles_by_account, role_name)
     # User wants to assume a role in a single account
     else:
-        return __get_single_account_role(roles_by_account, account_name, role_name)
+        return __get_single_account_role(roles_by_account, account_namfyrole_name)
 
 
 def assume_role(account_role, samlAssertion):
@@ -49,7 +49,7 @@ def assume_role(account_role, samlAssertion):
 
 def __get_all_account_roles(roles_by_account, role_name):
     if not role_name:
-        print("{}You must speicify a role using the {}--role{} option when assuming a role accross all accounts{}".format(Colors.lred,Colors.red,Colors.lred,Colors.normal))
+        print("{}You must specify a role using the {}--role{} option when assuming a role accross all accounts{}".format(Colors.lred,Colors.red,Colors.lred,Colors.normal))
         exit(1)
     account_roles = []
     for account_name in roles_by_account:
