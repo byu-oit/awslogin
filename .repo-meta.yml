@@ -48,4 +48,6 @@ software:
     technologies_used:
       - Python
       - 'AWS CodeBuild'
+      - Handel-Codepipeline
+      - 'AWS CodePipeline'
     type: 'command-line app'
