@@ -1,51 +1,51 @@
----
-$schemaver: '2.0'
+$schemaver: 2.0
 repo_url: https://github.com/byu-oit/awslogin
 software:
-  - name: awslogin
-    type: command-line app
-    aliases:
-    short_description: Script for CLI access to AWS via ADFS
-    assignment_group: gro:AD-Global Education Initiative
-    notes:
+  - aliases:
+    assignment_group: 'gro:AD-Global Education Initiative'
+    ddd:
+      business_domain:
+      context_map_url:
+      ubiquitous_language_url:
+    developed_by_byu: true
+    links:
+      swagger_urls:
+      system_documentation_url: https://github.com/byu-oit/awslogin
     maintained_by:
       - dsw88
       - pauldeden
-    developed_by_byu: true
-    ddd:
-        business_domain:
-        ubiquitous_language_url:
-        context_map_url:
-    links:
-        system_documentation_url: https://github.com/byu-oit/awslogin
-        swagger_urls:
     microservice: false
+    name: awslogin
+    notes:
+    short_description: 'Script for CLI access to AWS via ADFS'
+    stages:
+      development:
+        aws_account:
+        hosting_location: Other
+        relationships:
+          depends_on:
+            db_read_only:
+            db_read_write:
+            software:
+          reverse_proxy:
+          runs_on:
+            blade_server:
+            rack_server:
+            server_cluster:
+            virtual_server:
+          supports:
+            service:
+            software:
+        urls:
+          physical_url:
+          product_page:
+          virtual_url:
+    standard_change_template_id:
+    tags:
+      app: awslogin
+      data-sensitivity: confidential
+      team: 'gro:AD-Global Education Initiative'
     technologies_used:
       - Python
-    standard_change_template_id:
-    stages:
-        development:
-            urls:
-                product_page:
-                physical_url:
-                virtual_url:
-            hosting_location: Other
-            aws_account:
-            relationships:
-                depends_on:
-                    db_read_write:
-                    db_read_only:
-                    software:
-                supports:
-                    software:
-                    service:
-                reverse_proxy:
-                runs_on:
-                    server_cluster:
-                    virtual_server:
-                    rack_server:
-                    blade_server:
-    tags:
-        data-sensitivity: confidential
-        team: gro:AD-Global Education Initiative
-        app: awslogin
+      - 'AWS CodeBuild'
+    type: 'command-line app'
