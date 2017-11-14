@@ -1,8 +1,8 @@
-$schemaver: 2.0
+$schemaver: '2.0'
 repo_url: https://github.com/byu-oit/awslogin
 software:
   - aliases:
-    assignment_group: 'gro:AD-Global Education Initiative'
+    assignment_group: gro:AD-Global Education Initiative
     ddd:
       business_domain:
       context_map_url:
@@ -17,7 +17,7 @@ software:
     microservice: false
     name: awslogin
     notes:
-    short_description: 'Script for CLI access to AWS via ADFS'
+    short_description: Script for CLI access to AWS via ADFS
     stages:
       development:
         aws_account:
@@ -44,10 +44,10 @@ software:
     tags:
       app: awslogin
       data-sensitivity: confidential
-      team: 'gro:AD-Global Education Initiative'
+      team: gro:AD-Global Education Initiative
     technologies_used:
       - Python
-      - 'AWS CodeBuild'
+      - AWS CodeBuild
       - Handel-Codepipeline
-      - 'AWS CodePipeline'
-    type: 'command-line app'
+      - AWS CodePipeline
+    type: command-line app
