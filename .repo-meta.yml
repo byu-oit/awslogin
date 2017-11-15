@@ -50,4 +50,5 @@ software:
       - AWS CodeBuild
       - Handel-Codepipeline
       - AWS CodePipeline
+      - HTML
     type: command-line app
