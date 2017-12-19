@@ -78,6 +78,8 @@ def load_last_netid(profile):
 
 def write_to_config_file(profile, net_id, region, role, account):
     _create_aws_dir_if_not_exists()
+    if profile != 'default':
+        profile = 'profile {}'.format(profile)
     file = _aws_file('config')
     one_hour = datetime.timedelta(hours=1)
     expires = datetime.datetime.now() + one_hour
