@@ -1,4 +1,4 @@
-$schemaver: '2.0'
+$schemaver: 2.1
 repo_url: https://github.com/byu-oit/awslogin
 software:
   - aliases:
@@ -40,11 +40,6 @@ software:
           physical_url:
           product_page:
           virtual_url:
-    standard_change_template_id:
-    tags:
-      app: awslogin
-      data-sensitivity: confidential
-      team: gro:AD-Global Education Initiative
     technologies_used:
       - Python
       - AWS CodeBuild
@@ -52,3 +47,5 @@ software:
       - AWS CodePipeline
       - HTML
     type: command-line app
+    data_sensitivity: confidential
+    standard_change_template:
