@@ -81,10 +81,13 @@ def get_account_names(saml_assertion):
         'SAMLResponse': saml_assertion.assertion
     })
     response.raise_for_status()
-    html_response = ET.fromstring(response.text, ET.HTMLParser())
+    html_response = BeautifulSoup(response.text, 'lxml')
     account_names = {}
-    for element in html_response.findall('.//div[@class="saml-account-name"]'):
-        account_id = element.text.split(' ')[2].replace('(', '').replace(')', '')
+    for element in html_response.find_all('div', class_="saml-account-name"):
+        try:
+            account_id = element.text.split(' ')[2].replace('(', '').replace(')', '')
+        except IndexError:
+            account_id = element.text.split(' ')[1]
         account_name = element.text.split(' ')[1]
         account_names[account_id] = account_name
 
