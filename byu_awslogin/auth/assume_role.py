@@ -41,7 +41,7 @@ def assume_role(account_role, samlAssertion):
         RoleArn=account_role.role_arn,
         PrincipalArn=account_role.principal_arn,
         SAMLAssertion=samlAssertion,
-        DurationSeconds=3600,
+        DurationSeconds=28800, # Valid for 8 hours
     )
 
     return aws_session_token
