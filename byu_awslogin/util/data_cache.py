@@ -76,13 +76,13 @@ def load_last_netid(profile):
         return ''
 
 
-def write_to_config_file(profile, net_id, region, role, account):
+def write_to_config_file(profile, net_id, region, role, account, sessionDuration):
     _create_aws_dir_if_not_exists()
     if profile != 'default':
         profile = 'profile {}'.format(profile)
     file = _aws_file('config')
-    one_hour = datetime.timedelta(hours=1)
-    expires = datetime.datetime.now() + one_hour
+    session_duration_delta = datetime.timedelta(seconds=sessionDuration)
+    expires = datetime.datetime.now() + session_duration_delta
     config = _open_config_file(file)
     if not net_id and config.get(profile, 'adfs_netid', fallback=None):
         net_id = config[profile]['adfs_netid']
