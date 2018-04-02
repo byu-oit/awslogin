@@ -35,13 +35,13 @@ def ask_which_role_to_assume(account_names, principal_roles, account_name=None, 
         return __get_single_account_role(roles_by_account, account_name, role_name)
 
 
-def assume_role(account_role, samlAssertion):
+def assume_role(account_role, samlAssertion, sessionDuration):
     conn = boto3.client('sts', config=client.Config(signature_version=botocore.UNSIGNED))
     aws_session_token = conn.assume_role_with_saml(
         RoleArn=account_role.role_arn,
         PrincipalArn=account_role.principal_arn,
         SAMLAssertion=samlAssertion,
-        DurationSeconds=28800, # Valid for 8 hours
+        DurationSeconds=sessionDuration
     )
 
     return aws_session_token

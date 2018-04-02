@@ -93,7 +93,7 @@ def test_write_to_config_file(mock_exists, mock_aws_file):
     role = 'FakeRole'
     account = 'FakeAccount'
     profile = "default"
-    data_cache.write_to_config_file(profile, net_id, region, role, account)
+    data_cache.write_to_config_file(profile, net_id, region, role, account, 3600)
     written_config = read_config_file(config_file)
 
     assert mock_exists.call_count == 1

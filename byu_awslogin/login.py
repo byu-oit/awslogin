@@ -14,6 +14,7 @@ from .auth.saml import get_account_names, get_saml_assertion
 from .util.consoleeffects import Colors
 from .util.data_cache import load_last_netid, write_to_config_file, write_to_cred_file, cache_adfs_auth
 
+STS_SESSION_TIMEOUT = 32400 # Valid for 9 hours
 
 def cached_login(account, role, profile, region, adfs_auth_result):
     saml_assertion = get_saml_assertion(adfs_auth_result)
@@ -50,7 +51,7 @@ def _perform_login(adfs_auth_result, saml_assertion, account, role, profile, net
 
     # Assume all requested roles and set in the environment
     for account_role_to_assume in account_roles_to_assume:
-        aws_session_token = assume_role(account_role_to_assume, saml_assertion.assertion)
+        aws_session_token = assume_role(account_role_to_assume, saml_assertion.assertion, STS_SESSION_TIMEOUT)
 
         # If assuming roles across all accounts, then use the account name as the profile name
         if account == 'all':
@@ -58,7 +59,7 @@ def _perform_login(adfs_auth_result, saml_assertion, account, role, profile, net
 
         write_to_cred_file(profile, aws_session_token)
         write_to_config_file(profile, net_id, region, account_role_to_assume.role_name,
-                             account_role_to_assume.account_name)
+                             account_role_to_assume.account_name, STS_SESSION_TIMEOUT)
         _print_status_message(account_role_to_assume)
 
     # By caching the ADFS auth information we can re-assume roles without reauthenticating until the ADFS session expires
