@@ -25,7 +25,7 @@ except ImportError:
 from .util.data_cache import get_status, load_cached_adfs_auth, remove_cached_adfs_auth
 from .login import cached_login, non_cached_login
 
-__VERSION__ = '0.13.3'
+__VERSION__ = '0.13.4'
 
 # Enable VT Mode on windows terminal code from:
 # https://bugs.python.org/issue29059
