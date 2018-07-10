@@ -12,7 +12,6 @@ s3transfer
 six
 urllib3
 lxml
-awscli
 click
 configparser
 future
