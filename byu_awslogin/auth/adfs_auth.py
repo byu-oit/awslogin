@@ -154,6 +154,12 @@ def _authenticate_duo(duo_page_html_soup, roles_page_url, session):
             transaction_id,
             session
         )
+        _verify_auth_result(
+            duo_host,
+            sid,
+            transaction_id,
+            session
+        )
         auth_signature = _authentication_result(
             duo_host,
             sid,
@@ -167,6 +173,43 @@ def _authenticate_duo(duo_page_html_soup, roles_page_url, session):
 
 
 def _authentication_result(
+        duo_host,
+        sid,
+        duo_transaction_id,
+        session
+):
+    status_for_url = "https://{}/frame/status/{}".format(duo_host, duo_transaction_id)
+    response = session.post(
+        status_for_url,
+        verify=True,
+        headers=_headers,
+        data={
+            'sid': sid,
+            'txid': duo_transaction_id
+        }
+    )
+
+    if response.status_code != 200:
+        raise RuntimeError(
+            u'Issues during retrieval of a code entered into '
+            u'the device. The error response {}'.format(
+                response
+            )
+        )
+
+    json_response = response.json()
+    if json_response['stat'] != 'OK':
+        raise RuntimeError(
+            u'There was an issue during retrieval of a code entered into the device.'
+            u' The error response: {}'.format(
+                response.text
+            )
+        )
+    auth_signature = response.json()['response']['cookie']
+    return auth_signature
+
+
+def _verify_auth_result(
         duo_host,
         sid,
         duo_transaction_id,
@@ -210,9 +253,6 @@ def _authentication_result(
                 response.text
             )
         )
-
-    auth_signature = response.json()['response']['cookie']
-    return auth_signature
 
 
 def _verify_that_code_was_sent(duo_host, sid, duo_transaction_id, session):

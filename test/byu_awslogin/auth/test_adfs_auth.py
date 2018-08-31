@@ -41,11 +41,16 @@ def test_authenticate(mock_requests):
     duo_verify_code_mock = MagicMock(status_code=200, text=duo_verify_code_json)
     duo_verify_code_mock.json.return_value = json.loads(duo_verify_code_json)
     
+    # Mock duo auth verify
+    duo_auth_verify_json = open('{}/adfs_html_mocks/duo_verify_result.json'.format(script_dir), 'r').read()
+    duo_auth_verify_mock = MagicMock(status_code=200, text=duo_auth_verify_json)
+    duo_auth_verify_mock.json.return_value = json.loads(duo_auth_verify_json)
+
     # Mock duo auth result
     duo_auth_result_json = open('{}/adfs_html_mocks/duo_auth_result.json'.format(script_dir), 'r').read()
     duo_auth_result_mock = MagicMock(status_code=200, text=duo_auth_result_json)
     duo_auth_result_mock.json.return_value = json.loads(duo_auth_result_json)
     
-    mock_session.post.side_effect = [duo_screen_mock, duo_init_mock, duo_auth_trans_init_mock, duo_verify_code_mock, duo_auth_result_mock]
+    mock_session.post.side_effect = [duo_screen_mock, duo_init_mock, duo_auth_trans_init_mock, duo_verify_code_mock, duo_auth_verify_mock, duo_auth_result_mock]
     adfs_auth_result = authenticate('FakeUsername', 'FakePassword')
     assert adfs_auth_result.signed_response == 'REDACTED:APP|REDACTED'
