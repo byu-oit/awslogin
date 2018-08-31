@@ -1,0 +1,11 @@
+{
+    "response": {
+        "parent": "True&java_version=&flash_version=&screen_resolution_width=1280&screen_resolution_height=800&color_depth=24",
+        "status": "Success. Logging you in...",
+        "status_code": "allow",
+        "result": "SUCCESS",
+        "reason": "User approved",
+        "result_url": "/frame/status/REDACTED"
+    },
+    "stat": "OK"
+}
