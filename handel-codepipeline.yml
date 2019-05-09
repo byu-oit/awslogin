@@ -8,11 +8,8 @@ pipelines:
     - type: github
       name: Source
       owner: byu-oit
-      repo: awslogin
+      repo: byu-jwt-python
       branch: master
     - type: codebuild
       name: Build
-      build_image: python:3.6
-    - type: pypi
-      name: pypiDeploy
-      build_image: python:3.6
+      build_image: aws/codebuild/python:3.7.1

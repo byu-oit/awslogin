@@ -1,15 +1,22 @@
 version: 0.2
 
+env:
+  parameter-store:
+    PYPI_USER: byu-awslogin.pypiuser
+    PYPI_PASS: byu-awslogin.pypipass
+
 phases:
+  install:
+    commands:
+      - pip install poetry
+      - poetry install
   pre_build:
     commands:
-      - pip install -r requirements.txt
-      - pip install pytest
+      - poetry run pytest -vvv
   build:
-    commands: 
-      - pytest
-  post_build:
-    commands: 
+    commands:
+      - poetry build
+      - poetry publish -u $PYPI_USER -p $PYPI_PASS
 artifacts:
   files:
-    - '**/*'
+    - ./**/*
