@@ -8,7 +8,7 @@ pipelines:
     - type: github
       name: Source
       owner: byu-oit
-      repo: byu-jwt-python
+      repo: awslogin
       branch: master
     - type: codebuild
       name: Build
