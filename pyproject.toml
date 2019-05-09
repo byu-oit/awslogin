@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "byu_awslogin"
+version = "0.13.8"
+description = "An aws-adfs spinoff that fits BYU's needs"
+authors = ["BYU OIT Application Development <it@byu.edu>"]
+license = "Apache-2.0"
+readme = "README.md"
+homepage = "https://github.com/byu-oit/awslogin"
+repository = "https://github.com/byu-oit/awslogin"
+
+[tool.poetry.dependencies]
+python = "~2.7 || ^3.4"
+boto3 = "^1.9"
+requests = "^2.21"
+click = "^7.0"
+future = "^0.17.1"
+configparser = "^3.7"
+beautifulsoup4 = "^4.7"
+lxml = "^4.3"
+
+[tool.poetry.dev-dependencies]
+pytest = "^4.4"
+
+[tool.poetry.scripts]
+awslogin = 'byu_awslogin.index:cli'
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

@@ -19,8 +19,8 @@
 
 
 ## Another good way
-Another good way is to use a project like [pipsi](https://github.com/mitsuhiko/pipsi) which will keep Python cli application dependencies seperated from your global python packages
+Another good way is to use a project like [pipx](https://pipxproject.github.io/pipx/) which will keep Python cli application dependencies seperated from your global python packages
 
-1. Install pipsi follow their install directions [here](https://github.com/mitsuhiko/pipsi)
-2. Install via pipsi: `pipsi install byu_awslogin`
-3. To upgrade: `pipsi upgrade byu_awslogin`
+1. Install pipx following their install directions [here](https://pipxproject.github.io/pipx/installation/)
+2. Install via pipx: `pipx install byu_awslogin`
+3. To upgrade: `pipx upgrade byu_awslogin`

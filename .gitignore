@@ -10,3 +10,4 @@ byu_awslogin.egg-info/
 .cache/
 .pytest_cache/
 .python-version
+.vscode/
