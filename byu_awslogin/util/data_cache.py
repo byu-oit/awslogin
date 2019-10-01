@@ -59,6 +59,8 @@ def get_status(profile='default'):
             print("{}{} - {}".format(Colors.white, x, message))
         return
     else:
+        if profile != 'default':
+            profile = "profile {}".format(profile)
         if config.has_section(profile):
             message = _get_status_message(config, profile)
             print(message)
