@@ -93,7 +93,8 @@ def test_write_to_config_file(mock_exists, mock_aws_file):
     role = 'FakeRole'
     account = 'FakeAccount'
     profile = "default"
-    data_cache.write_to_config_file(profile, net_id, region, role, account, 3600)
+    data_cache.write_to_config_file(
+        profile, net_id, region, role, account, 3600)
     written_config = read_config_file(config_file)
 
     assert mock_exists.call_count == 1
@@ -122,17 +123,30 @@ def test_load_last_netid(mock_open_config_file):
 
 
 @patch('byu_awslogin.util.data_cache._open_config_file')
-def test_get_status(mock_open_config_file):
-    mock_config_file = mock_open_config_file.return_value = MagicMock()
-    d = {'default': {'adfs_role': 'fake_role', 'adfs_expires': '01-02-2017 15:03'}}
-    mock_config_file.__getitem__.side_effect = d.__getitem__
-    mock_config_file.has_section.return_value = True
-    mock_config_file.has_option.return_value = True
+def test_get_status(mock_open_config_file, capsys):
+    test_config = """
+[default]
+adfs_role = ReadOnly@fake-account
+adfs_expires = 01-02-2017 15:03
+
+[profile foobar]
+adfs_role = Admin@fake-account
+adfs_expires = 02-05-2018 16:42
+    """
+    configfile = configparser.ConfigParser()
+    configfile.read_string(test_config)
+    mock_open_config_file.return_value = configfile
 
     profile = "default"
     data_cache.get_status(profile)
+    captures = capsys.readouterr()
 
     assert mock_open_config_file.call_count == 1
-    assert mock_config_file.has_section.call_count == 1
-    assert mock_config_file.has_option.call_count == 2
-    assert mock_config_file.__getitem__.call_count == 3
+    assert 'ReadOnly@fake-account' in captures.out
+
+    profile = "foobar"
+    data_cache.get_status(profile)
+    captures = capsys.readouterr()
+
+    assert mock_open_config_file.call_count == 2
+    assert 'Admin@fake-account' in captures.out
