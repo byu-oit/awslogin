@@ -14,15 +14,17 @@ from .auth.saml import get_account_names, get_saml_assertion
 from .util.consoleeffects import Colors
 from .util.data_cache import load_last_netid, write_to_config_file, write_to_cred_file, cache_adfs_auth
 
-STS_SESSION_TIMEOUT = 32400 # Valid for 9 hours
+STS_SESSION_TIMEOUT = 32400  # Valid for 9 hours
+
 
 def cached_login(account, role, profile, region, adfs_auth_result):
     saml_assertion = get_saml_assertion(adfs_auth_result)
 
-    if not saml_assertion: # Not logged in anymore, so need to re-login
+    if not saml_assertion:  # Not logged in anymore, so need to re-login
         non_cached_login(account, role, profile, region)
-    else: # Still logged in and got a SAML assertion properly
-        _perform_login(adfs_auth_result, saml_assertion, account, role, profile, None, region)
+    else:  # Still logged in and got a SAML assertion properly
+        _perform_login(adfs_auth_result, saml_assertion,
+                       account, role, profile, None, region)
 
 
 def non_cached_login(account, role, profile, region):
@@ -43,15 +45,18 @@ def non_cached_login(account, role, profile, region):
     del password
 
     saml_assertion = get_saml_assertion(adfs_auth_result)
-    _perform_login(adfs_auth_result, saml_assertion, account, role, profile, net_id, region)
+    _perform_login(adfs_auth_result, saml_assertion,
+                   account, role, profile, net_id, region)
 
 
 def _perform_login(adfs_auth_result, saml_assertion, account, role, profile, net_id, region):
-    account_roles_to_assume = _prompt_for_roles_to_assume(saml_assertion, account, role)
+    account_roles_to_assume = _prompt_for_roles_to_assume(
+        saml_assertion, account, role)
 
     # Assume all requested roles and set in the environment
     for account_role_to_assume in account_roles_to_assume:
-        aws_session_token = assume_role(account_role_to_assume, saml_assertion.assertion, STS_SESSION_TIMEOUT)
+        aws_session_token = assume_role(
+            account_role_to_assume, saml_assertion.assertion, STS_SESSION_TIMEOUT)
 
         # If assuming roles across all accounts, then use the account name as the profile name
         if account == 'all':
@@ -74,7 +79,7 @@ def _prompt_for_roles_to_assume(saml_assertion, account, role):
 
 
 def _print_status_message(assumed_role):
-    if assumed_role.role_name == "AccountAdministrator":
+    if assumed_role.role_name == "Admin":
         print("Now logged into {}{}{}@{}{}{}".format(Colors.red, assumed_role.role_name, Colors.white,
                                                      Colors.yellow, assumed_role.account_name, Colors.normal))
     else:
@@ -86,14 +91,16 @@ def _get_user_ids(profile):
     # Ask for NetID, or use cached if user doesn't specify another
     cached_netid = load_last_netid(profile)
     if cached_netid:
-        net_id_prompt = 'BYU Net ID [{}{}{}]: '.format(Colors.blue,cached_netid,Colors.normal)
+        net_id_prompt = 'BYU Net ID [{}{}{}]: '.format(
+            Colors.blue, cached_netid, Colors.normal)
     else:
         net_id_prompt = 'BYU Net ID: '
     net_id = input(net_id_prompt) or cached_netid
 
     # Append the ADFS-required "@byu.local" to the Net ID
     if "@byu.local" in net_id:
-        print('{}@byu.local{} is not required'.format(Colors.lblue,Colors.normal))
+        print('{}@byu.local{} is not required'.format(
+            Colors.lblue, Colors.normal))
         username = net_id
     else:
         username = '{}@byu.local'.format(net_id)

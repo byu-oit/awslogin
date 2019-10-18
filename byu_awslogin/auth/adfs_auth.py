@@ -60,12 +60,15 @@ def authenticate(username, password):
     _check_adfs_authentication_success(login_response_html_soup)
 
     # Perform DUO MFA
-    auth_signature, duo_request_signature = _authenticate_duo(login_response_html_soup, True, session)
-    signed_response = _get_signed_response(auth_signature, duo_request_signature)
+    auth_signature, duo_request_signature = _authenticate_duo(
+        login_response_html_soup, True, session)
+    signed_response = _get_signed_response(
+        auth_signature, duo_request_signature)
     context = _context(login_response_html_soup)
     action_url = _action_url_on_validation_success(login_response_html_soup)
 
     return AdfsAuthResult(action_url, context, signed_response, session)
+
 
 _headers = {
     'Accept-Language': 'en',
@@ -74,9 +77,11 @@ _headers = {
     'Accept': 'text/plain, */*; q=0.01',
 }
 
+
 def _action_url_on_validation_success(login_response_html_soup):
     options_form = login_response_html_soup.find('form', id='options')
     return options_form['action']
+
 
 def _get_signed_response(auth_signature, duo_request_signature):
     return '{}:{}'.format(auth_signature, _app(duo_request_signature))
@@ -86,6 +91,7 @@ def _app(request_signature):
     app_pattern = re.compile(".*(APP\|[^:]+)")
     m = app_pattern.search(request_signature)
     return m.group(1)
+
 
 def _context(login_response_html_soup):
     context_input = login_response_html_soup.find('input', id='context')
@@ -111,7 +117,8 @@ def _get_auth_payload(login_html_soup, username, password):
 
 def _get_login_submit_url(login_html_soup):
     parsed_adfs_login_url = urlparse(adfs_entry_url)
-    adfs_form_submit_url = parsed_adfs_login_url.scheme + "://" + parsed_adfs_login_url.netloc
+    adfs_form_submit_url = parsed_adfs_login_url.scheme + \
+        "://" + parsed_adfs_login_url.netloc
     for inputtag in login_html_soup.find_all(re.compile('(FORM|form)')):
         action = inputtag.get('action')
         loginid = inputtag.get('id')
@@ -122,10 +129,11 @@ def _get_login_submit_url(login_html_soup):
 
 def _check_adfs_authentication_success(login_response_html_soup):
     login_form_tag = login_response_html_soup.find('form', id='loginForm')
-    if login_form_tag: # Login form present means the authentication failed
+    if login_form_tag:  # Login form present means the authentication failed
         auth_error = login_form_tag.find('span', id='errorText')
         print(auth_error.string)
         exit(1)
+
 
 def _authenticate_duo(duo_page_html_soup, roles_page_url, session):
     duo_host = _duo_host(duo_page_html_soup)
@@ -178,7 +186,8 @@ def _authentication_result(
         duo_transaction_id,
         session
 ):
-    status_for_url = "https://{}/frame/status/{}".format(duo_host, duo_transaction_id)
+    status_for_url = "https://{}/frame/status/{}".format(
+        duo_host, duo_transaction_id)
     response = session.post(
         status_for_url,
         verify=True,
@@ -387,23 +396,28 @@ def _begin_authentication_transaction(duo_host, sid, preferred_factor, preferred
     json_response = response.json()
     if json_response['stat'] != 'OK':
         if json_response['message'] == 'Unknown authentication method.':
-            print("{}Generic Authentication Failure.\n{}Are you enrolled in Duo MFA?\nDid you enable Duo automatic push?{}".format(Colors.lred, Colors.lyellow, Colors.normal))
+            print("{}Generic Authentication Failure.\n{}Are you enrolled in Duo MFA?\nDid you enable Duo automatic push?{}".format(
+                Colors.lred, Colors.lyellow, Colors.normal))
             os._exit(1)
-        else:    
-             raise RuntimeError(
-                 u'Cannot begin authentication process. The error response: {}'.format(response.text)
-             )
+        else:
+            raise RuntimeError(
+                u'Cannot begin authentication process. The error response: {}'.format(
+                    response.text)
+            )
     return json_response['response']['txid']
 
 
 def _duo_host(duo_page_html_soup):
-    duo_script = duo_page_html_soup.find('form', id='duo_form').find_next_sibling('script').string
+    duo_script = duo_page_html_soup.find(
+        'form', id='duo_form').find_next_sibling('script').string
     duo_host_pattern = re.compile("'host': '([^']+)'")
     m = duo_host_pattern.search(duo_script)
     return m.group(1)
 
+
 def _duo_request_signature(duo_page_html_soup):
-    duo_script = duo_page_html_soup.find('form', id='duo_form').find_next_sibling('script').string
+    duo_script = duo_page_html_soup.find(
+        'form', id='duo_form').find_next_sibling('script').string
     duo_signature_pattern = re.compile("'sig_request': '([^']+)'")
     m = duo_signature_pattern.search(duo_script)
     return m.group(1)

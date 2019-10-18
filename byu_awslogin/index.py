@@ -56,7 +56,8 @@ def cli(account, role, profile, region, status, logout, proxy):
 
     if logout:
         remove_cached_adfs_auth()
-        print("{}Terminated ADFS Session{}".format(Colors.yellow, Colors.normal))
+        print("{}Terminated ADFS Session{}".format(
+            Colors.yellow, Colors.normal))
         return
 
     if proxy:

@@ -20,7 +20,8 @@ def load_cached_adfs_auth():
     config = _open_config_file(file)
     section = 'all'
     if config.has_section(section) and config.has_option(section, 'adfs_auth'):
-        unpickled = pickle.loads(base64.urlsafe_b64decode(config[section]['adfs_auth'].encode()))
+        unpickled = pickle.loads(base64.urlsafe_b64decode(
+            config[section]['adfs_auth'].encode()))
         return unpickled
     else:
         return None
@@ -65,7 +66,8 @@ def get_status(profile='default'):
             message = _get_status_message(config, profile)
             print(message)
         else:
-            print("{}Couldn't find profile: {}{}".format(Colors.red, profile, Colors.normal))
+            print("{}Couldn't find profile: {}{}".format(
+                Colors.red, profile, Colors.normal))
         return
 
 
@@ -132,9 +134,11 @@ def _get_status_message(config, profile):
         expires = _check_expired(config[profile]['adfs_expires'])
         account_name = "{}{}".format(Colors.cyan, config[profile]['adfs_role'])
         if expires == 'Expired':
-            expires_msg = "{}{} at: {}".format(Colors.red, expires, config[profile]['adfs_expires'])
+            expires_msg = "{}{} at: {}".format(
+                Colors.red, expires, config[profile]['adfs_expires'])
         else:
-            expires_msg = "{}{} at: {}".format(Colors.yellow, expires, config[profile]['adfs_expires'])
+            expires_msg = "{}{} at: {}".format(
+                Colors.yellow, expires, config[profile]['adfs_expires'])
         return "{} {}- {}{}".format(account_name, Colors.white, expires_msg, Colors.normal)
     else:
         return "{}Couldn't find status info{}".format(Colors.red, Colors.normal)

@@ -17,6 +17,7 @@ future = "^0.17.1"
 configparser = ">=3.7,<5.0"
 beautifulsoup4 = "^4.7"
 lxml = "^4.3"
+prompt-toolkit = "^2.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^4.4"
