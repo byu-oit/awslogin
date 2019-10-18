@@ -29,7 +29,8 @@ class SAMLAssertion(object):
         aws_roles = [element.text.split(',') for element in raw_roles]
 
         # Note the format of the attribute value is provider_arn, role_arn
-        principal_roles = [role for role in aws_roles if ':saml-provider/' in role[0]]
+        principal_roles = [
+            role for role in aws_roles if ':saml-provider/' in role[0]]
         return principal_roles
 
     def get_session_duration(self):
@@ -55,9 +56,9 @@ def get_saml_assertion(adfs_auth_result):
         headers=headers,
         allow_redirects=True,
         data={
-          'AuthMethod': 'DuoAdfsAdapter',
-          'Context': adfs_auth_result.context,
-          'sig_response': adfs_auth_result.signed_response
+            'AuthMethod': 'DuoAdfsAdapter',
+            'Context': adfs_auth_result.context,
+            'sig_response': adfs_auth_result.signed_response
         }
     )
 
@@ -85,7 +86,8 @@ def get_account_names(saml_assertion):
     account_names = {}
     for element in html_response.find_all('div', class_="saml-account-name"):
         try:
-            account_id = element.text.split(' ')[2].replace('(', '').replace(')', '')
+            account_id = element.text.split(
+                ' ')[2].replace('(', '').replace(')', '')
         except IndexError:
             account_id = element.text.split(' ')[1]
         account_name = element.text.split(' ')[1]
