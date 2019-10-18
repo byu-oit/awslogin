@@ -135,20 +135,6 @@ def __prompt_for_account(account_names):
         else:
             return account
 
-    # for index, account_name in enumerate(account_names):
-    #     print("\t{}{}{}  {}{}".format(Colors.white, str(index).rjust(
-    #         2), Colors.yellow, account_name, Colors.normal))
-
-    # while True:
-    #     choice = input('{}Select account:{} '.format(
-    #         Colors.lblue, Colors.normal))
-    #     try:
-    #         return account_names[int(choice)]
-    #     except:  # noqa: E722
-    #         maximum = len(account_names) - 1
-    #         print('{}Please enter an integer between 0 and {}{}'.format(
-    #             Colors.lred, maximum, Colors.normal))
-
 
 def __prompt_for_role(account_name, role_names):
     border = ""
