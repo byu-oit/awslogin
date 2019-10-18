@@ -78,6 +78,21 @@ To use it:
   - Run `awslogin --version` to display the running version of awslogin
   - Run `awslogin --help` for full help message
 
+# Bash or ZSH Completion
+
+If you use Bash or ZSH you can enable TAB complete by adding one of the following to your .bashrc or .zshrc file
+
+- Add `eval "$(_AWSLOGIN_COMPLETE=source awslogin)"` to .bashrc or .zshrc. Note: This will invoke `awslogin` on shell startup and could potentially slow the shell activation
+
+OR
+- Run the following: `_AWSLOGIN_COMPLETE=source awslogin > ~/awslogin-complete.sh` Then add `. /path/to/awslogin-complete.sh` to .bashrc or .zshrc
+
+Note depending on your ZSH installation the `source` in the above commands may need to be `source_zsh`
+
+To test if it works run awslogin at least once for the account and role cache to populate. On next login `awslogin -a [TAB][TAB]` should output available accounts and `awslogin -a {some account} -r [TAB][TAB]` should output available roles for the selected account
+
+Limitation: Accounts and Role completeion at the CLI is loaded from a cache file store in `~/.aws/.awslogin_accountrole_cache.json` This file should be updated anytime awslogin is ran.
+
 # Reporting bugs or requesting features
 
   - Enter an issue on the github repo.
