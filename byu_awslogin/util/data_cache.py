@@ -9,6 +9,7 @@ import base64
 import configparser
 import datetime
 import os
+import json
 import pickle
 from os.path import expanduser
 
@@ -112,6 +113,24 @@ def write_to_cred_file(profile, aws_session_token):
     }
     with open(file, 'w') as configfile:
         config.write(configfile)
+
+
+def write_role_cache(roles):
+    output = {}
+    for account in roles:
+        output[account] = [k for k in roles[account]]
+    file = _aws_file(".awslogin_accountrole_cache.json")
+    with open(file, 'w') as f:
+        json.dump(output, f, indent=2)
+
+
+def load_role_cache():
+    file = _aws_file(".awslogin_accountrole_cache.json")
+    try:
+        with open(file, 'r') as f:
+            return json.load(f)
+    except:  # noqa: E722
+        return {}
 
 
 def _aws_file(file_name):

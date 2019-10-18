@@ -11,6 +11,7 @@ import os
 import click
 
 from .util.consoleeffects import Colors
+from .util.data_cache import load_role_cache
 
 try:
     import lxml.etree as ET
@@ -38,11 +39,21 @@ if platform.system().lower() == 'windows':
     mode = c_int(mode.value | 4)
     windll.kernel32.SetConsoleMode(c_int(stdout_handle), mode)
 
+completion = load_role_cache()
+
+
+def account_completion(ctx, args, incomplete):
+    return [k for k in completion.keys() if incomplete in k]
+
+
+def role_completion(ctx, args, incomplete):
+    return [k for k in completion[args[1]] if incomplete in k]
+
 
 @click.command()
 @click.version_option(version=__VERSION__)
-@click.option('-a', '--account', help='Account to login with')
-@click.option('-r', '--role', help='Role to use after login')
+@click.option('-a', '--account', help='Account to login with', autocompletion=account_completion)
+@click.option('-r', '--role', help='Role to use after login', autocompletion=role_completion)
 @click.option('-p', '--profile', default='default', help='Profile to use store credentials. Defaults to default')
 @click.option('--region', default='us-west-2', help="The AWS region you will be hitting")
 @click.option('-s', '--status', is_flag=True, default=False, help='Display current logged in status. Use profile all to see all statuses')

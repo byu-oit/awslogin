@@ -17,6 +17,7 @@ from prompt_toolkit.shortcuts import prompt
 from prompt_toolkit.validation import Validator
 
 from ..util.consoleeffects import Colors
+from ..util.data_cache import write_role_cache
 
 
 class AccountRole(object):
@@ -102,6 +103,7 @@ def __get_roles_by_account(account_names, principal_roles):
 
         roles_by_account.setdefault(account_name, {})[role_name] = AccountRole(
             account_name, role_name, role_arn, principal_arn)
+    write_role_cache(roles_by_account)
     return roles_by_account
 
 
