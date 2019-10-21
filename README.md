@@ -71,23 +71,12 @@ To use it:
   - Run `awslogin --help` for full help message
 
 # Bash or ZSH Completion
-
-If you use Bash or ZSH you can enable TAB complete by adding one of the following to your .bashrc or .zshrc file
-
 Bash:
-
-- Add `eval "$(_AWSLOGIN_COMPLETE=source awslogin)"` to .bashrc. 
-
+- Run the following: `_AWSLOGIN_COMPLETE=source awslogin > ~/awslogin-complete.sh` Then add `source /path/to/awslogin-complete.sh` to .bashrc
 ZSH:
+- Run the following: `_AWSLOGIN_COMPLETE=source_zsh awslogin > ~/awslogin-complete.sh` Then add `source /path/to/awslogin-complete.sh` to .zshrc
 
-- Add `eval "$(_AWSLOGIN_COMPLETE=source_zsh awslogin)"` to .bashrc. Note: This will invoke `awslogin` on shell startup and could potentially slow the shell activation
-
-Note: The above will generate the completetions on every shell startup and could potentially slow the shell activation Alternative you can do the following to speed up shell startup
-
-Bash:
-- Run the following: `_AWSLOGIN_COMPLETE=source awslogin > ~/awslogin-complete.sh` Then add `. /path/to/awslogin-complete.sh` to .bashrc
-ZSH:
-- Run the following: `_AWSLOGIN_COMPLETE=source_zsh awslogin > ~/awslogin-complete.sh` Then add `. /path/to/awslogin-complete.sh` to .zshrc
+Alternatively put the `awslogin-complete.sh` in your `/etc/bash_completion.d` or similiar directory (`~/.zfunc`) to load at shells startup
 
 To test if it works run awslogin at least once for the account and role cache to populate. On next login `awslogin -a [TAB][TAB]` should output available accounts and `awslogin -a {some account} -r [TAB][TAB]` should output available roles for the selected account
 
