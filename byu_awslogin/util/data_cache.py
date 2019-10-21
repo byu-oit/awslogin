@@ -116,6 +116,7 @@ def write_to_cred_file(profile, aws_session_token):
 
 
 def write_role_cache(roles):
+    _create_aws_dir_if_not_exists()
     output = {}
     for account in roles:
         output[account] = [k for k in roles[account]]
