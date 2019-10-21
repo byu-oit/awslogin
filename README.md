@@ -16,19 +16,11 @@ sorry.
 
 # Installation
 
-  - Python > 3.6 is recommended but it should work with Python 2.7. See
-    the [installation
-    options](https://github.com/byu-oit/awslogin/blob/master/INSTALLATION_OPTIONS.md) For additional options
-    page for step by step instructions for installing in various
-    environments.
-  - See <https://www.python.org/downloads/> for a windows installation
-    method.
-  - In linux you may be able to use apt, rpm or
-    <https://www.python.org/downloads/>.
-  - In Mac you can use homebrew, macports or
-    <https://www.python.org/downloads/>.
-  - Run `pip3 install byu_awslogin` or `pip install byu_awslogin` as
-    appropriate for your python installation
+  - Python 3.6+ is recommended as python2 is EOL January 2020.
+  - It is highly recommended to use an application like [Pipx](https://pipxproject.github.io/pipx/) to install and use python cli applications.
+  - Follow the pipx [installation documentation](https://pipxproject.github.io/pipx/installation/) then simply run `pipx install byu_awslogin`
+  - See the [installation options](https://github.com/byu-oit/awslogin/blob/master/INSTALLATION_OPTIONS.md) For additional options
+    page for step by step instructions for installing in various environments
 
 # Upgrading
 
@@ -82,16 +74,24 @@ To use it:
 
 If you use Bash or ZSH you can enable TAB complete by adding one of the following to your .bashrc or .zshrc file
 
-- Add `eval "$(_AWSLOGIN_COMPLETE=source awslogin)"` to .bashrc or .zshrc. Note: This will invoke `awslogin` on shell startup and could potentially slow the shell activation
+Bash:
 
-OR
-- Run the following: `_AWSLOGIN_COMPLETE=source awslogin > ~/awslogin-complete.sh` Then add `. /path/to/awslogin-complete.sh` to .bashrc or .zshrc
+- Add `eval "$(_AWSLOGIN_COMPLETE=source awslogin)"` to .bashrc. 
 
-Note depending on your ZSH installation the `source` in the above commands may need to be `source_zsh`
+ZSH:
+
+- Add `eval "$(_AWSLOGIN_COMPLETE=source_zsh awslogin)"` to .bashrc. Note: This will invoke `awslogin` on shell startup and could potentially slow the shell activation
+
+Note: The above will generate the completetions on every shell startup and could potentially slow the shell activation Alternative you can do the following to speed up shell startup
+
+Bash:
+- Run the following: `_AWSLOGIN_COMPLETE=source awslogin > ~/awslogin-complete.sh` Then add `. /path/to/awslogin-complete.sh` to .bashrc
+ZSH:
+- Run the following: `_AWSLOGIN_COMPLETE=source_zsh awslogin > ~/awslogin-complete.sh` Then add `. /path/to/awslogin-complete.sh` to .zshrc
 
 To test if it works run awslogin at least once for the account and role cache to populate. On next login `awslogin -a [TAB][TAB]` should output available accounts and `awslogin -a {some account} -r [TAB][TAB]` should output available roles for the selected account
 
-Limitation: Accounts and Role completeion at the CLI is loaded from a cache file store in `~/.aws/.awslogin_accountrole_cache.json` This file should be updated anytime awslogin is ran.
+Limitation: Accounts and Role completion at the CLI is loaded from a cache file. This file will be updated anytime awslogin is ran.
 
 # Reporting bugs or requesting features
 
@@ -107,6 +107,5 @@ Limitation: Accounts and Role completeion at the CLI is loaded from a cache file
 
 # TODO
 
-  -   - Write tests
-        
-          - Write more tests to increase overall coverage
+  - Write tests
+    - Write more tests to increase overall coverage
