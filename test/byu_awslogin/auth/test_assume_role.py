@@ -4,10 +4,12 @@ from __future__ import division
 from __future__ import absolute_import
 from future import standard_library
 standard_library.install_aliases()
+from unittest.mock import patch, MagicMock
 from byu_awslogin.auth.assume_role import ask_which_role_to_assume
 
 
-def test_ask_which_role_to_assume_single_role():
+@patch('byu_awslogin.auth.assume_role.write_role_cache')
+def test_ask_which_role_to_assume_single_role(role_cache):
     account_names = {
         '333333333333': 'my-dev-account',
         '222222222222': 'my-prod-account'
@@ -27,7 +29,9 @@ def test_ask_which_role_to_assume_single_role():
     assert account_roles[0].principal_arn == "arn:aws:iam::333333333333:saml-provider/ADFS"
     assert account_roles[0].role_arn == "arn:aws:iam::333333333333:role/ReadOnly"
 
-def test_ask_which_role_to_assume_all_roles():
+
+@patch('byu_awslogin.auth.assume_role.write_role_cache')
+def test_ask_which_role_to_assume_all_roles(role_cache):
     account_names = {
         '333333333333': 'my-dev-account',
         '222222222222': 'my-prod-account'

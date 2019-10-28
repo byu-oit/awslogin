@@ -11,6 +11,7 @@ from byu_awslogin.auth.saml import SAMLAssertion
 from byu_awslogin.auth.assume_role import AccountRole
 from byu_awslogin.auth.adfs_auth import AdfsAuthResult
 
+
 @patch('byu_awslogin.login.get_saml_assertion')
 @patch('byu_awslogin.login._prompt_for_roles_to_assume')
 @patch('byu_awslogin.login.assume_role')
