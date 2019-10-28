@@ -72,11 +72,11 @@ To use it:
 
 # Bash or ZSH Completion
 Bash:
-- Run the following: `_AWSLOGIN_COMPLETE=source awslogin > ~/awslogin-complete.sh` Then add `source /path/to/awslogin-complete.sh` to .bashrc
+- Run the following: `_AWSLOGIN_COMPLETE=source awslogin > ~/_awslogin` Then add `source /path/to/_awslogin` to .bashrc
 ZSH:
-- Run the following: `_AWSLOGIN_COMPLETE=source_zsh awslogin > ~/awslogin-complete.sh` Then add `source /path/to/awslogin-complete.sh` to .zshrc
+- Run the following: `_AWSLOGIN_COMPLETE=source_zsh awslogin > ~/_awslogin` Then add `source /path/to/_awslogin` to .zshrc
 
-Alternatively put the `awslogin-complete.sh` in your `/etc/bash_completion.d` or similiar directory (`~/.zfunc`) to load at shells startup
+Alternatively put the `_awslogin` in your `/etc/bash_completion.d` or similiar directory (`~/.zfunc`) to load at shells startup
 
 To test if it works run awslogin at least once for the account and role cache to populate. On next login `awslogin -a [TAB][TAB]` should output available accounts and `awslogin -a {some account} -r [TAB][TAB]` should output available roles for the selected account
 
