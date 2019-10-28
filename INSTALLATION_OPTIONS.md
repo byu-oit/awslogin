@@ -1,5 +1,21 @@
 # Various tested and working ways of installing byu_awslogin depending on the OS
 
+## Python Installation Options:
+  - See <https://www.python.org/downloads/> for a windows installation method.
+  - In linux you may be able to use apt, rpm or <https://www.python.org/downloads/>.
+  - In Mac you can use homebrew, macports or <https://www.python.org/downloads/>.
+
+## Recommended Install Method
+  - It is highly recommended to use an application like [Pipx](https://pipxproject.github.io/pipx/) to install and use python cli applications.
+  - Follow the pipx [installation documentation](https://pipxproject.github.io/pipx/installation/) 
+  - Once pipx is installed run `pipx install byu_awslogin`
+  - To upgrade to a new release of byu_awslogin run `pipx upgrade byu_awslogin`
+  - Note: most popular cause for issues with pipx is path. Ensure the correct paths are in your PATH variable
+  
+## Alternative Install Methods
+  - Run `pip3 install byu_awslogin` or `pip install byu_awslogin` as
+    appropriate for your python installation
+
 ## node:latest docker image or any debian wheezy installation built in Python
 * `apt-get update`
 * `apt-get install python-dev`
@@ -16,11 +32,3 @@
 * `python3.6 get-pip.py`
 * `pip3.6 install byu_awslogin`
 * `awslogin`
-
-
-## Another good way
-Another good way is to use a project like [pipx](https://pipxproject.github.io/pipx/) which will keep Python cli application dependencies seperated from your global python packages
-
-1. Install pipx following their install directions [here](https://pipxproject.github.io/pipx/installation/)
-2. Install via pipx: `pipx install byu_awslogin`
-3. To upgrade: `pipx upgrade byu_awslogin`
