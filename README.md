@@ -89,10 +89,8 @@ Limitation: Accounts and Role completion at the CLI is loaded from a cache file.
 
 # Deploying changes
 
-  - Update the version.
-  - Commit the change and push. Handel-codepipeline will run the
-    automated tests and if they pass it will build and upload a new
-    version to pypi.
+  - Update the version in pyproject.toml
+  - Commit the changes and push. Create a new release with the version number and Github Actions will build, test and publish
 
 # TODO
 
