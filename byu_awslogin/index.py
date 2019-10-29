@@ -26,7 +26,7 @@ except ImportError:
 from .util.data_cache import get_status, load_cached_adfs_auth, remove_cached_adfs_auth
 from .login import cached_login, non_cached_login
 
-__VERSION__ = '0.14.1'
+__VERSION__ = '0.14.2'
 
 # Enable VT Mode on windows terminal code from:
 # https://bugs.python.org/issue29059
@@ -43,11 +43,17 @@ completion = load_role_cache()
 
 
 def account_completion(ctx, args, incomplete):
-    return [k for k in completion.keys() if incomplete in k]
+    try:
+        return [k for k in completion.keys() if incomplete in k]
+    except:  # noqa: E722
+        return []
 
 
 def role_completion(ctx, args, incomplete):
-    return [k for k in completion[args[1]] if incomplete in k]
+    try:
+        return [k for k in completion[args[1]] if incomplete in k]
+    except IndexError:
+        return []
 
 
 @click.command()
