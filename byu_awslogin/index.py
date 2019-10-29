@@ -10,6 +10,7 @@ import os
 
 import click
 
+from .__version__ import __version__
 from .util.consoleeffects import Colors
 from .util.data_cache import load_role_cache
 
@@ -26,7 +27,6 @@ except ImportError:
 from .util.data_cache import get_status, load_cached_adfs_auth, remove_cached_adfs_auth
 from .login import cached_login, non_cached_login
 
-__VERSION__ = '0.14.2'
 
 # Enable VT Mode on windows terminal code from:
 # https://bugs.python.org/issue29059
@@ -57,7 +57,7 @@ def role_completion(ctx, args, incomplete):
 
 
 @click.command()
-@click.version_option(version=__VERSION__)
+@click.version_option(version=__version__)
 @click.option('-a', '--account', help='Account to login with', autocompletion=account_completion)
 @click.option('-r', '--role', help='Role to use after login', autocompletion=role_completion)
 @click.option('-p', '--profile', default='default', help='Profile to use store credentials. Defaults to default')
