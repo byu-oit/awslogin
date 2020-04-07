@@ -14,11 +14,15 @@ employees only we had that option. We then morphed it a little more for
 our use cases. This isn't something that you could use outside of BYU,
 sorry.
 
+# DUO 2FA Requirements
+In order for Duo 2FA to work properly Automatic Push needs to be enabled.
+
 # Installation
 
   - Python 3.6+ is recommended as python2 is EOL January 2020.
   - It is highly recommended to use an application like [Pipx](https://pipxproject.github.io/pipx/) to install and use python cli applications.
   - Follow the pipx [installation documentation](https://pipxproject.github.io/pipx/installation/) then simply run `pipx install byu_awslogin`
+  - Experimental Binaries are available on the releases page. These are new and in testing [Releases](https://gihtub.com/byu-oit/awslogin/releases)
   - See the [installation options](https://github.com/byu-oit/awslogin/blob/master/INSTALLATION_OPTIONS.md) For additional options
     page for step by step instructions for installing in various environments
 
