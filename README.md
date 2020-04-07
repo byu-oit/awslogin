@@ -93,8 +93,10 @@ Limitation: Accounts and Role completion at the CLI is loaded from a cache file.
 
 # Deploying changes
 
-  - Update the version in pyproject.toml
-  - Commit the changes and push. Create a new release with the version number and Github Actions will build, test and publish
+  - Update the version in `pyproject.toml` and `__version__.py`
+  - Commit the changes and push.
+  - Build binaries
+  - Create a new release (add binaries and sha256sums.txt) with the version number and Github Actions will build, test and publish
 
 # TODO
 
