@@ -13,7 +13,7 @@
   - Note: most popular cause for issues with pipx is path. Ensure the correct paths are in your PATH variable
 
 ## Experimental Binaries
-  Binaries have been created for Mac OS, Linux, and Windows. Simply download the corresponding zip file from the [Releases](https://gihtub.com/byu-oit/awslogin/releases) Page and put the binary somewhere and add that directory to your PATH environment variable ie `~/.local/bin` or `/usr/local/bin` for Linux/Mac or `%USERPROFILE%\bin` on Windows (Note if it doesn't recognize the command make sure those directories are in your PATH)
+  Binaries have been created for Mac OS, Linux, and Windows. Simply download the corresponding zip file from the [Releases](https://github.com/byu-oit/awslogin/releases) Page and put the binary somewhere and add that directory to your PATH environment variable ie `~/.local/bin` or `/usr/local/bin` for Linux/Mac or `%USERPROFILE%\bin` on Windows (Note if it doesn't recognize the command make sure those directories are in your PATH)
   
 ## Alternative Install Methods
   - Run `pip3 install byu_awslogin` or `pip install byu_awslogin` as
