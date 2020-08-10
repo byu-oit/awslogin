@@ -21,7 +21,7 @@ prompt-toolkit = "^2.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^4.4"
-pyinstaller = "^3.6"
+pyinstaller = "^4.0"
 macholib = "^1.14"
 pywin32-ctypes = "^0.2.0"
 pefile = "^2019.4.18"
