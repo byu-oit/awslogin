@@ -77,6 +77,7 @@ To use it:
 # Bash or ZSH Completion
 Bash:
 - Run the following: `_AWSLOGIN_COMPLETE=source awslogin > ~/_awslogin` Then add `source /path/to/_awslogin` to .bashrc
+
 ZSH:
 - Run the following: `_AWSLOGIN_COMPLETE=source_zsh awslogin > ~/_awslogin` Then add `source /path/to/_awslogin` to .zshrc
 
