@@ -14,7 +14,7 @@ linux_zip_out="./dist/${linux_zip_name}"
 linux_bin_out="./dist/linux"
 win_zip_name="byu-awslogin-win-${version}.zip"
 win_zip_out="./dist/${win_zip_name}"
-win_bin_out="./dist/win"
+win_bin_out="./dist/windows"
 
 
 #Bundling Windows Binary
@@ -28,6 +28,13 @@ then
 	echo "aborting"
 	exit 1
 fi
+
+echo "Generating Requirements file for building"
+poetry export -f requirements.txt --output requirements.txt
+
+####### WINDOWS BUILD and BUNDLE ########
+echo "Building Windows Binary with Docker Image"
+docker run -v "$(pwd):/src/" cdrx/pyinstaller-windows
 
 if [[ -f "${win_bin_out}/awslogin.exe" ]];
 then
@@ -45,7 +52,7 @@ else
 fi
 
 
-#Build MacOS
+####### MacOS BUILD and BUNDLE ########
 echo "Building Mac OS Binary"
 
 poetry run pyinstaller --clean -y --dist "${mac_bin_out}" --workpath /tmp --onefile awslogin.spec
@@ -61,8 +68,9 @@ pushd "$mac_bin_out"
 zip ../${mac_zip_name} awslogin
 popd
 
+####### Linux BUILD and BUNDLE ########
 echo "Building Linux Binary with Docker Image"
-docker run -it --rm -v $(pwd):/src byu-awslogin-linuxbuild
+docker run -v "$(pwd):/src/" cdrx/pyinstaller-linux
 
 if [[ -f "${linux_zip_out}" ]]
 then
@@ -75,8 +83,19 @@ pushd "$linux_bin_out"
 zip ../${linux_zip_name} awslogin
 popd
 
+
+##### Checksums ######
 echo "Generating Checksums"
 pushd "./dist"
 sha256sum *.zip > sha256sums.txt
 popd
 
+
+##### Clean Requirements File ######
+if [[ -f "requirements.txt" ]];
+then
+	echo "Cleaning requirements.txt"
+	rm requirements.txt
+fi
+
+echo "Done"
