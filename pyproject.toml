@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "byu_awslogin"
-version = "0.15.0"
+version = "0.15.1"
 description = "An aws-adfs spinoff that fits BYU's needs"
 authors = ["BYU OIT Application Development <it@byu.edu>"]
 license = "Apache-2.0"
