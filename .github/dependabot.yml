@@ -1,0 +1,22 @@
+version: 2
+updates:
+- package-ecosystem: pip
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "08:00"
+    timezone: America/Denver
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: boto3
+    versions:
+    - ">= 1.14.a, < 1.15"
+  - dependency-name: lxml
+    versions:
+    - "> 4.5.0, < 4.6"
+  - dependency-name: urllib3
+    versions:
+    - 1.26.3
+  - dependency-name: boto3
+    versions:
+    - 1.16.62
