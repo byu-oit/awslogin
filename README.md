@@ -1,3 +1,18 @@
+# 💀 NOTICE - This Process is Deprecated! 💀
+**The awslogin python script is no longer in use at BYU.**
+
+The new AWS login page is <https://aws.byu.edu>. 
+
+# Approved 'awslogin' Alternatives
+To login from the command line, setup the __AWS CLI__
+  - Start at <https://aws.byu.edu>
+  - Click the account name you want to login to
+  - Select `Command Line or Programmatic Access` and follow the directions on how to update your local aws config files. 
+  - Install the [aws cli](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) 
+  - Run `aws sso login --profile=[my aws account name]` in the terminal
+
+Another tool, [AWS SSO Credentials Helper](https://www.npmjs.com/package/aws-sso-creds-helper), can be used with Node projects and IDEs. 
+
 # AWSLOGIN
 Python script for CLI and SDK access to AWS via ADFS while requiring MFA
 access using <https://duo.com/>
