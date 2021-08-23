@@ -7,7 +7,7 @@ The new AWS login page is <https://aws.byu.edu>.
 To login from the command line, setup the __AWS CLI__
   - Start at <https://aws.byu.edu>
   - Click the account name you want to login to
-  - For each AWS account that exists you'll need to create a profile configuration in your .aws/config file. Each configuration should look like this, replacing `<AWS_ACCOUNT_NAME>` with the actual account name and `<AWS_ACCOUNT_ID>` with the actual account id.
+  - For each AWS account that exists you'll need to create a profile configuration in your .aws/config file. Each configuration should look like this, replacing `<AWS_ACCOUNT_NAME>` with the actual account name and `<AWS_ACCOUNT_ID>` with the actual account id. If you have multiple configurations then seperate them with an empty line.
 
         [profile <AWS_ACCOUNT_NAME>]
         sso_start_url = https://byulogin.awsapps.com/start
