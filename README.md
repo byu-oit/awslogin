@@ -1,3 +1,29 @@
+# 💀 NOTICE - This Process is Deprecated! 💀
+**The awslogin python script is no longer in use at BYU.**
+
+The new AWS login page is <https://aws.byu.edu>. 
+
+# Approved 'awslogin' Alternatives
+To login from the command line, setup the __AWS CLI__
+  - Start at <https://aws.byu.edu>
+  - Click the account name you want to login to
+  - For each AWS account that exists you'll need to create a profile configuration in your .aws/config file. Each configuration should look like this, replacing `<AWS_ACCOUNT_NAME>` with the actual account name and `<AWS_ACCOUNT_ID>` with the actual account id. If you have multiple configurations then seperate them with an empty line.
+
+        [profile <AWS_ACCOUNT_NAME>]
+        sso_start_url = https://byulogin.awsapps.com/start
+        sso_region = us-west-2
+        sso_account_id = <AWS_ACCOUNT_ID>
+        sso_role_name = PowerUser-<AWS_ACCOUNT_ID>
+        region = us-west-2
+        output = json
+    - The config file is located at ~/.aws/config on Linux or macOS, or at C:\Users\USERNAME\.aws\config on Windows.    
+    - The `<AWS_ACCOUNT_NAME` is in blue, and normally follows the pattern `organization-project-environment` eg. `byu-lockerrental-dev`
+    - The `<AWS_ACCOUNT_ID>` is located under the account name eg. `#12345AWS_ACCOUNT_ID | AWS_ACCOUNT_NAME@cloud.byu.edu`
+  - Install the [aws cli](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) 
+  - Run `aws sso login --profile=[my aws account name]` in the terminal
+
+Another tool, [AWS SSO Credentials Helper](https://www.npmjs.com/package/aws-sso-creds-helper), can be used with Node projects and IDEs. 
+
 # AWSLOGIN
 Python script for CLI and SDK access to AWS via ADFS while requiring MFA
 access using <https://duo.com/>
